@@ -1,0 +1,19 @@
+﻿<Page x:Class="Terminal_7.Frames.VideoViewPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Terminal_7.Frames"
+      mc:Ignorable="d" 
+        Title="VideoViewPage"
+  Focusable="False">
+    <Grid>
+        <MediaElement x:Name="MediaPlayer" Focusable="False" LoadedBehavior="Manual" UnloadedBehavior="Manual" Stretch="Fill">
+            <MediaElement.Style>
+                <Style TargetType="MediaElement">
+                    <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                </Style>
+            </MediaElement.Style>
+        </MediaElement>
+    </Grid>
+</Page>
