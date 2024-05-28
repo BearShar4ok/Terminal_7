@@ -92,6 +92,9 @@
     <Compile Include="Windows\AlertWindow.xaml.cs">
       <DependentUpon>AlertWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Windows\Game\LabirintGameWindow.xaml.cs">
+      <DependentUpon>LabirintGameWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Windows\Game\SputnikGameWindow.xaml.cs">
       <DependentUpon>SputnikGameWindow.xaml</DependentUpon>
     </Compile>
@@ -141,6 +144,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Windows\AlertWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\Game\LabirintGameWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

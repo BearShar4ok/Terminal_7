@@ -270,7 +270,7 @@ namespace Terminal_7.Windows
             {
                 ReternedState = State.Hack;
                 Password = GetPassword();
-                Close();
+                Close();////////
             }
             else
             {

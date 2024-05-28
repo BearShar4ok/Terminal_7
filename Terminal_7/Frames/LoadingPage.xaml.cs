@@ -380,7 +380,11 @@ namespace Terminal_7.Frames
                             {
                                 if (content.CanBeHacked)
                                 {
+                                    ///
                                     var hw = new HackWindow(_theme, lw.Password, content.HackAttempts);
+                                    //lw.Close();
+
+
                                     if (hw.ShowDialog() == false)
                                     {
                                         if (hw.ReternedState == State.Access)
@@ -406,6 +410,7 @@ namespace Terminal_7.Frames
                                 }
                             }
                         }
+                        
                     }
                 }
                 catch

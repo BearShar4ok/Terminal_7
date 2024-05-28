@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Navigation;
@@ -102,7 +103,10 @@ namespace Terminal_7.Frames
                      new Action(() =>
                      {
                          Output.Text = Output.Text.Remove(Output.Text.Length - 1, 1);
-                         Output.CaretIndex = Output.Text.Length - 1;
+                         if (Output.Text.Length > 0)
+                            Output.CaretIndex = Output.Text.Length - 1;
+                         else
+                             Output.CaretIndex = 0;
                      }));
 
                     UpdateCarriage();
@@ -205,7 +209,16 @@ namespace Terminal_7.Frames
         private void SendFile(object sender, ExecutedRoutedEventArgs e)
         {
             ProgressAlertWindow pw = new ProgressAlertWindow("Отправка файлов", "Ожидайте. Идет отправка...", _theme);
-            pw.Show();
+            if (pw.ShowDialog() == false)
+            {
+
+            }
+
+            var alert = new AlertWindow("Уведомление", "Сообщение отправлено", "Закрыть", _theme);
+            if (alert.ShowDialog() == false)
+            {
+
+            }
         }
 
         protected void AdditionalKeys(object sender, KeyEventArgs e)

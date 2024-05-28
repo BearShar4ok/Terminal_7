@@ -31,12 +31,15 @@
             </StackPanel>
 
             <TextBlock x:Name="TbMessage" Background="Transparent" Grid.ColumnSpan="3" Grid.Row="1" TextAlignment="Center" FontSize="20" TextWrapping="Wrap"/>
-            <ProgressBar x:Name="bar" Grid.Row="2" Grid.ColumnSpan="3" Grid.Column="0" Height="50" Minimum="0" Maximum="100" Value="0" ValueChanged="bar_ValueChanged" >
+            <ProgressBar x:Name="bar" Grid.Row="2" Grid.ColumnSpan="3" Grid.Column="0" Height="50" Minimum="0" Maximum="100"
+                         Value="0" ValueChanged="bar_ValueChanged" Loaded="bar_Loaded" Style="{StaticResource PrBar}">
+
 
             </ProgressBar>
             <!-- <Border BorderBrush="Black" BorderThickness="3" Grid.Row="2" Grid.Column="1" Background="#dddddd" Margin="0,0,0,5"> -->
             <!--    <Label x:Name="LblButton" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>     -->
             <!-- </Border>    -->
+            
         </Grid>
     </Border>
 </Window>

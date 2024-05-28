@@ -10,6 +10,7 @@ using Terminal_7.Classes;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using Terminal_7.Windows.Game;
 
 namespace Terminal_7
 {
@@ -38,8 +39,15 @@ namespace Terminal_7
             }
 
             LoadTheme(_theme);
+
+            //LoadParams();
+
+            LabirintGameWindow lw = new LabirintGameWindow(_theme);
+            if (lw.ShowDialog() != false)
+            {
             
-            LoadParams();
+            }
+            Close();
         }
 
         private void LoadTheme(string name)
@@ -56,6 +64,7 @@ namespace Terminal_7
             Closing += (obj, e) => DevicesManager.StopListening();
 
             Addition.NavigationService?.Navigate(new TechnicalViewPage(_theme, new LoadingPage(_theme)));
+            
 
         }
 

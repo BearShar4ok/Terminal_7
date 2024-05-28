@@ -1,0 +1,18 @@
+﻿<Window x:Class="Terminal_7.Windows.Game.LabirintGameWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Terminal_7.Windows.Game"
+        mc:Ignorable="d"
+        Title="LabirintGameWindow">
+
+    <Canvas x:Name="field" Focusable="True" Background="Pink"  KeyDown="field_KeyDown">
+        <TextBox Name="infoText" HorizontalAlignment="Left" Height="50" VerticalAlignment="Center">
+
+        </TextBox>
+        <Rectangle>
+            
+        </Rectangle>
+    </Canvas>
+</Window>
