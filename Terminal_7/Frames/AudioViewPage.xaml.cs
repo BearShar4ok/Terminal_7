@@ -153,7 +153,7 @@ namespace Terminal_7.Frames
             // Set new line to progress bar
             ProgressBar.Text = $"[{new string(CharCurrLen, ind)}{new string(CharAllLen, CntSymbol - ind)}]";
         }
-
+        
         private void AdditionalKeys(object sender, KeyEventArgs e)
         {
             switch (e.Key)

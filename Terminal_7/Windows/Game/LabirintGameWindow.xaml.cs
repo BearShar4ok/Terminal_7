@@ -90,7 +90,7 @@ namespace Terminal_7.Windows.Game
 
         private SaveData LoadMap()
         {
-            var text = File.ReadAllText("C:\\Users\\Redde\\Downloads\\testToTerminal2.json");
+            var text = File.ReadAllText("C:\\Users\\Redde\\Downloads\\testToTerminal3.json");
 
             var data = JsonConvert.DeserializeObject<List<Dictionary<string, dynamic>>>(text);
 

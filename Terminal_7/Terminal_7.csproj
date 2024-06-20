@@ -107,6 +107,9 @@
     <Compile Include="Windows\ProgressAlertWindow.xaml.cs">
       <DependentUpon>ProgressAlertWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Windows\ProgressAlertWindowText.xaml.cs">
+      <DependentUpon>ProgressAlertWindowText.xaml</DependentUpon>
+    </Compile>
     <Page Include="Frames\AudioViewPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -164,6 +167,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Windows\ProgressAlertWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\ProgressAlertWindowText.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

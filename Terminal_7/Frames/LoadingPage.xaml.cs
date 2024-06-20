@@ -275,7 +275,7 @@ namespace Terminal_7.Frames
 
             foreach (var dir in allDirectories)
             {
-                var name = Path.GetFileNameWithoutExtension(dir);
+                var name =  Path.GetFileName(dir);
                 if (name == SystemFolder) continue;
 
                 var lbi = new ListBoxItem()

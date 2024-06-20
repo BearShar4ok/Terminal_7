@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Terminal_7.Windows.Game;
+using Terminal_7.Windows;
 
 namespace Terminal_7
 {
@@ -42,8 +43,15 @@ namespace Terminal_7
 
             //LoadParams();
 
-            LabirintGameWindow lw = new LabirintGameWindow(_theme);
-            if (lw.ShowDialog() != false)
+           //LabirintGameWindow lw = new LabirintGameWindow(_theme);
+           //if (lw.ShowDialog() != false)
+           //{
+           //
+           //}
+
+
+            ProgressAlertWindowText pw = new ProgressAlertWindowText("Отправка файлов", "Ожидайте. Идет отправка...", _theme);
+            if (pw.ShowDialog() == false)
             {
             
             }

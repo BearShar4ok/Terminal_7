@@ -208,7 +208,7 @@ namespace Terminal_7.Frames
         }
         private void SendFile(object sender, ExecutedRoutedEventArgs e)
         {
-            ProgressAlertWindow pw = new ProgressAlertWindow("Отправка файлов", "Ожидайте. Идет отправка...", _theme);
+            ProgressAlertWindowText pw = new ProgressAlertWindowText("Отправка файлов", "Ожидайте. Идет отправка...", _theme);
             if (pw.ShowDialog() == false)
             {
 
