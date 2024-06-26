@@ -8,6 +8,8 @@ using System.Windows.Media;
 using Terminal_7.Classes;
 using System.Windows.Controls;
 using System.Threading;
+using System.Linq;
+using System.IO;
 
 namespace Terminal_7.Windows
 {
@@ -58,8 +60,14 @@ namespace Terminal_7.Windows
 
         private void LoadTheme(string theme)
         {
-            LblTitle.FontFamily = new FontFamily(new Uri("pack://application:,,,/"), Addition.Themes + theme + "/#" + ConfigManager.Config.FontName);
-            TbMessage.FontFamily = new FontFamily(new Uri("pack://application:,,,/"), Addition.Themes + theme + "/#" + ConfigManager.Config.FontName);
+            var nameFont = "Font.ttf";
+            var fullpath = Path.GetFullPath(Addition.Themes + theme + "/" + nameFont);
+
+            var families = Fonts.GetFontFamilies(fullpath);
+            var family1 = families.First();
+
+            LblTitle.FontFamily =  family1;
+            TbMessage.FontFamily = family1;
            // LblButton.FontFamily = new FontFamily(new Uri("pack://application:,,,/"), Addition.Themes + theme + "/#" + ConfigManager.Config.FontName);
 
             Background = new ImageBrush() { ImageSource = new BitmapImage(new Uri(Addition.Themes + theme + "/Alert_background.png", UriKind.Relative)) };

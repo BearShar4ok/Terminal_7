@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -100,8 +101,14 @@ namespace Terminal_7.Windows
 
         private void LoadTheme(string theme)
         {
+            var nameFont = "Font.ttf";
+            var fullpath = Path.GetFullPath(Addition.Themes + theme + "/" + nameFont);
+
+            var families = Fonts.GetFontFamilies(fullpath);
+            var family1 = families.First();
+
             Background = new ImageBrush() { ImageSource = new BitmapImage(new Uri(Addition.Themes + theme + "/Background.png", UriKind.Relative)) };
-            _localFontFamily = new FontFamily(new Uri("pack://application:,,,/"), Addition.Themes + _theme + "/#" + ConfigManager.Config.FontName);
+            _localFontFamily = family1;
 
             WindowStyle = WindowStyle.None;
             WindowState = WindowState.Maximized;

@@ -172,9 +172,13 @@ namespace Terminal_7.Classes
         public static Window GetWindowByFilename(string filename, string theme)
         {
             var exct = Path.GetExtension(filename).Remove(0, 1);
+            var appName = Path.GetFileName(filename).Split('.')[0];
             if (Execute.Contains(exct))
             {
-                return new SputnikGameWindow(theme);
+                if (appName== "labirint")
+                    return new LabirintGameWindow(theme);
+                if (appName == "sputnik")
+                    return new SputnikGameWindow(theme);
             }
             return null;
         }

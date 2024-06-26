@@ -1,7 +1,10 @@
 ﻿using System;
+using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -69,7 +72,15 @@ namespace Terminal_7.Windows.Game
 
             mainField.Background = new ImageBrush() { ImageSource = new BitmapImage(new Uri(Addition.Themes + _theme + "/Background.png", UriKind.Relative)) };
 
-            timerZone.FontFamily = new FontFamily(new Uri("pack://application:,,,/"), Addition.Themes + _theme + "/#" + ConfigManager.Config.FontName);
+
+            var nameFont = "Font.ttf";
+            var fullpath = Path.GetFullPath(Addition.Themes + _theme + "/" + nameFont);
+
+            var families = Fonts.GetFontFamilies(fullpath);
+            var family1 = families.First();
+
+
+            timerZone.FontFamily = family1;
             timerZone.FontSize = ConfigManager.Config.FontSize;
             timerZone.Foreground = (Brush)new BrushConverter().ConvertFromString(ConfigManager.Config.TerminalColor);
 

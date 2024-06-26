@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -99,7 +100,12 @@ namespace Terminal_7.Frames
 
         private void LoadTheme(string theme)
         {
-            ProgressBar.FontFamily = new FontFamily(new Uri("pack://application:,,,/"), Addition.Themes + theme + "/#" + ConfigManager.Config.FontName);
+            var nameFont = "Font.ttf";
+            var fullpath = Path.GetFullPath(Addition.Themes + theme + "/" + nameFont);
+
+            var families = Fonts.GetFontFamilies(fullpath);
+            var family1 = families.First();
+            ProgressBar.FontFamily = family1;
         }
 
         private void LoadParams()

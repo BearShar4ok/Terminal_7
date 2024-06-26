@@ -116,7 +116,12 @@ namespace Terminal_7.Frames
 
         protected void LoadTheme(string theme)
         {
-            Output.FontFamily = new FontFamily(new Uri("pack://application:,,,/"), Addition.Themes + theme + "/#" + ConfigManager.Config.FontName);
+            var nameFont = "Font.ttf";
+            var fullpath = Path.GetFullPath(Addition.Themes + theme + "/" + nameFont);
+
+            var families = Fonts.GetFontFamilies(fullpath);
+            var family1 = families.First();
+            Output.FontFamily = family1;
         }
 
         protected void LoadParams()

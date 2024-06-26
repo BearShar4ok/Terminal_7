@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
@@ -85,13 +87,17 @@ namespace Terminal_7.Windows
         private void LoadTheme(string theme)
         {
             Background = new ImageBrush() { ImageSource = new BitmapImage(new Uri(Addition.Themes + theme + "/Background.png", UriKind.Relative)) };
-            var fontFamily = new FontFamily(new Uri("pack://application:,,,/"), Addition.Themes + theme + "/#" + ConfigManager.Config.FontName);
+            var nameFont = "Font.ttf";
+            var fullpath = Path.GetFullPath(Addition.Themes + theme + "/" + nameFont);
 
-            TBLogin.FontFamily = fontFamily;
-            LblLogin.FontFamily = fontFamily;
+            var families = Fonts.GetFontFamilies(fullpath);
+            var family1 = families.First();
 
-            TBPassword.FontFamily = fontFamily;
-            LblPassword.FontFamily = fontFamily;
+            TBLogin.FontFamily = family1;
+            LblLogin.FontFamily = family1;
+
+            TBPassword.FontFamily = family1;
+            LblPassword.FontFamily = family1;
         }
 
         private void LoadParams()

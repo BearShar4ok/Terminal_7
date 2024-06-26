@@ -12,6 +12,7 @@ using System.Windows.Media.Imaging;
 using Path = System.IO.Path;
 using Terminal_7.Windows;
 using System.Windows.Media;
+using System.Windows.Controls.Primitives;
 
 namespace Terminal_7.Frames
 {
@@ -77,7 +78,12 @@ namespace Terminal_7.Frames
         }
         private void LoadTheme()
         {
-            LblInfo.FontFamily = new FontFamily(new Uri("pack://application:,,,/"), Addition.Themes + _theme + "/#" + ConfigManager.Config.FontName);
+            var nameFont = "Font.ttf";
+            var fullpath = Path.GetFullPath(Addition.Themes + _theme + "/" + nameFont);
+
+            var families = Fonts.GetFontFamilies(fullpath);
+            var family1 = families.First();
+            LblInfo.FontFamily = family1;
         }
 
         private void LoadParams()

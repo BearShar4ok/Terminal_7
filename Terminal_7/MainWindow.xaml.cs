@@ -43,19 +43,19 @@ namespace Terminal_7
 
             //LoadParams();
 
-           //LabirintGameWindow lw = new LabirintGameWindow(_theme);
-           //if (lw.ShowDialog() != false)
-           //{
-           //
-           //}
-
-
-            ProgressAlertWindowText pw = new ProgressAlertWindowText("Отправка файлов", "Ожидайте. Идет отправка...", _theme);
-            if (pw.ShowDialog() == false)
+            LabirintGameWindow lw = new LabirintGameWindow(_theme);
+            if (lw.ShowDialog() != false)
             {
             
             }
             Close();
+
+            //ProgressAlertWindowText pw = new ProgressAlertWindowText("Отправка файлов", "Ожидайте. Идет отправка...", _theme);
+            //if (pw.ShowDialog() == false)
+            //{
+            //
+            //}
+            //Close();
         }
 
         private void LoadTheme(string name)
@@ -72,7 +72,7 @@ namespace Terminal_7
             Closing += (obj, e) => DevicesManager.StopListening();
 
             Addition.NavigationService?.Navigate(new TechnicalViewPage(_theme, new LoadingPage(_theme)));
-            
+
 
         }
 
