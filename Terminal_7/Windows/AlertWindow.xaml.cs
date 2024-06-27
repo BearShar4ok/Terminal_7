@@ -40,8 +40,10 @@ namespace Terminal_7.Windows
             var family1 = families.First();
 
             LblTitle.FontFamily = family1;
-            TbMessage.FontFamily =family1;
-            LblButton.FontFamily =family1;
+            TbMessage.FontFamily = family1;
+            LblButton.FontFamily = family1;
+
+            button.Background = (Brush)new BrushConverter().ConvertFromString(ConfigManager.Config.TerminalColorSecond);
 
             Background = new ImageBrush() { ImageSource = new BitmapImage(new Uri(Addition.Themes + theme + "/Alert_background.png", UriKind.Relative)) };
         }

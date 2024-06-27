@@ -31,7 +31,7 @@
             </StackPanel>
 
             <TextBlock x:Name="TbMessage" Background="Transparent" Grid.ColumnSpan="3" Grid.Row="1" TextAlignment="Center" FontSize="20" TextWrapping="Wrap"/>
-            <Border BorderBrush="Black" BorderThickness="3" Grid.Row="2" Grid.Column="1" Background="#dddddd" Margin="0,0,0,5">
+            <Border x:Name="button" BorderBrush="Black" BorderThickness="3" Grid.Row="2" Grid.Column="1" Background="#D3A87C" Margin="0,0,0,5">
                 <Label x:Name="LblButton" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
             </Border>
         </Grid>

@@ -7,8 +7,8 @@
         mc:Ignorable="d"
         Title="LabirintGameWindow">
 
-    <Canvas x:Name="field" Focusable="True" Background="Pink"  KeyDown="field_KeyDown">
-        <TextBox Name="infoText" HorizontalAlignment="Left" Height="50" VerticalAlignment="Center">
+    <Canvas x:Name="field" Focusable="True" Background="DarkTurquoise"  KeyDown="field_KeyDown">
+        <TextBox Name="infoText" Background="Transparent" HorizontalAlignment="Left" Height="50" VerticalAlignment="Center">
 
         </TextBox>
         <Rectangle>

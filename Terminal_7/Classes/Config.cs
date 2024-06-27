@@ -7,7 +7,6 @@
         public float Opacity { get; set; }
         public string TerminalColor { get; set; }
         public string TerminalColorSecond { get; set; }
-        public string FontName { get; set; }
         public bool UsingDelayFastOutput { get; set; }
         public uint DelayFastOutput { get; set; }
         public uint DelayUpdateCarriage { get; set; }

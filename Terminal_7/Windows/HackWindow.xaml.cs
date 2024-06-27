@@ -282,7 +282,7 @@ namespace Terminal_7.Windows
             if (isDebugMod)
                 span.Background = new SolidColorBrush(Colors.Red);
             else
-                span.Background = new SolidColorBrush(Colors.DarkGreen);
+                span.Background = (Brush)new BrushConverter().ConvertFromString(ConfigManager.Config.TerminalColorSecond);
             run.Foreground = new SolidColorBrush(Colors.Azure);
         }
 

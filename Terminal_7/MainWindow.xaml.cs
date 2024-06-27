@@ -41,14 +41,14 @@ namespace Terminal_7
 
             LoadTheme(_theme);
 
-            //LoadParams();
+            LoadParams();
 
-            LabirintGameWindow lw = new LabirintGameWindow(_theme);
-            if (lw.ShowDialog() != false)
-            {
-            
-            }
-            Close();
+            //LabirintGameWindow lw = new LabirintGameWindow(_theme);
+            //if (lw.ShowDialog() != false)
+            //{
+            //
+            //}
+            //Close();
 
             //ProgressAlertWindowText pw = new ProgressAlertWindowText("Отправка файлов", "Ожидайте. Идет отправка...", _theme);
             //if (pw.ShowDialog() == false)

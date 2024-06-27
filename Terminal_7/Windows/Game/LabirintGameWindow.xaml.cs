@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -60,6 +61,10 @@ namespace Terminal_7.Windows.Game
         SaveData saveData;
         BoundingBox cave = new BoundingBox(0, 0, 0, 0);
         Random random = new Random();
+
+
+        string wall = "wall6.png";
+        string floor = "floor6.png";
         public LabirintGameWindow(string theme)
         {
             InitializeComponent();
@@ -78,6 +83,18 @@ namespace Terminal_7.Windows.Game
             field.Height = Height;
             field.Focus();
 
+            var nameFont = "Font.ttf";
+            var fullpath = System.IO.Path.GetFullPath(Addition.Themes + theme + "/" + nameFont);
+
+            var families = Fonts.GetFontFamilies(fullpath);
+            var family1 = families.First();
+            infoText.Text = $"Собрано драгоценных камней: {0} из {0}";
+            infoText.FontFamily = family1;
+            infoText.FontSize = ConfigManager.Config.FontSize;
+            infoText.Foreground = (Brush)new BrushConverter().ConvertFromString(ConfigManager.Config.TerminalColor);
+
+            field.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#6F94A7"));
+            //new ImageBrush(new BitmapImage(new Uri("C:\\Users\\Redde\\Downloads\\back.png", UriKind.RelativeOrAbsolute)));      6F94A7
 
             player.Fill = new SolidColorBrush(System.Windows.Media.Colors.Red);
 
@@ -93,7 +110,7 @@ namespace Terminal_7.Windows.Game
 
         private SaveData LoadMap()
         {
-            var text = File.ReadAllText("C:\\Users\\Redde\\Downloads\\testToTerminal3.json");
+            var text = File.ReadAllText("C:\\Users\\Redde\\Downloads\\testToTerminal4.json");
 
             var data = JsonConvert.DeserializeObject<List<Dictionary<string, dynamic>>>(text);
 
@@ -169,12 +186,12 @@ namespace Terminal_7.Windows.Game
         }
         private void DrawMap()
         {
-            string wall = "wall.png";
-            string floor = "floor.png";
+           
             int sdvigX = (int)(field.ActualWidth - cave.width) / 2;
             int sdvigY = (int)(field.ActualHeight - cave.height) / 2;
             player.Width = 32;
             player.Height = 32;
+            player.Fill = new ImageBrush(new BitmapImage(new Uri("C:\\Users\\Redde\\Downloads\\test\\player.png", UriKind.RelativeOrAbsolute)));
 
             Canvas.SetTop(player, saveData.Elements["Spawn.png"][0].pos.Y + sdvigY + 8);
             Canvas.SetLeft(player, saveData.Elements["Spawn.png"][0].pos.X + sdvigX + 8);
@@ -191,11 +208,28 @@ namespace Terminal_7.Windows.Game
 
 
 
+            Rectangle underground = new Rectangle();
+            underground.Width = field.ActualWidth;
+            underground.Height = field.ActualHeight;
+
+            ImageBrush imageBrush = new ImageBrush();
+            imageBrush.ImageSource = new BitmapImage(new Uri("C:\\Users\\Redde\\Downloads\\test\\backunder2.png", UriKind.RelativeOrAbsolute));
+            imageBrush.Stretch = Stretch.None; // Устанавливаем Stretch в None
+            imageBrush.AlignmentY = AlignmentY.Top;// Устанавливаем Stretch в None
+            underground.Fill = imageBrush;
+
+            //leftWall.Opacity = 0.3;
+            Canvas.SetTop(underground, cave.posY + sdvigY);
+            Canvas.SetLeft(underground, 0);
+            field.Children.Add(underground);
+
+
+
             Rectangle leftWall = new Rectangle();
             leftWall.Width = (field.ActualWidth - cave.width) / 2;
             leftWall.Height = field.ActualHeight - sdvigY;
-            leftWall.Fill = new SolidColorBrush(System.Windows.Media.Colors.AliceBlue);
-            leftWall.Opacity = 0.3;
+            leftWall.Fill = new SolidColorBrush(System.Windows.Media.Colors.Black);
+            //leftWall.Opacity = 0.3;
             Canvas.SetTop(leftWall, cave.posY + sdvigY);
             Canvas.SetLeft(leftWall, 0);
 
@@ -203,8 +237,8 @@ namespace Terminal_7.Windows.Game
             Rectangle rightWall = new Rectangle();
             rightWall.Width = (field.ActualWidth - cave.width) / 2;
             rightWall.Height = field.ActualHeight - sdvigY;
-            rightWall.Fill = new SolidColorBrush(System.Windows.Media.Colors.AliceBlue);
-            rightWall.Opacity = 0.3;
+            rightWall.Fill = new SolidColorBrush(System.Windows.Media.Colors.Black);
+            //rightWall.Opacity = 0.3;
             Canvas.SetTop(rightWall, cave.posY + sdvigY);
             Canvas.SetLeft(rightWall, cave.posX + cave.width + sdvigX);
 
@@ -212,8 +246,8 @@ namespace Terminal_7.Windows.Game
             Rectangle bottomWall = new Rectangle();
             bottomWall.Width = cave.width;
             bottomWall.Height = field.ActualHeight - sdvigY - cave.height;
-            bottomWall.Fill = new SolidColorBrush(System.Windows.Media.Colors.AliceBlue);
-            bottomWall.Opacity = 0.3;
+            bottomWall.Fill = new SolidColorBrush(System.Windows.Media.Colors.Black);
+            //bottomWall.Opacity = 0.3;
             Canvas.SetTop(bottomWall, cave.posY + cave.height + sdvigY);
             Canvas.SetLeft(bottomWall, cave.posX + sdvigX);
 
@@ -225,85 +259,13 @@ namespace Terminal_7.Windows.Game
                     Rectangle r = new Rectangle();
                     r.Width = blockSize;
                     r.Height = blockSize;
-                    r.Fill = new ImageBrush(new BitmapImage(new Uri("C:\\Users\\Redde\\Downloads\\floor2.png", UriKind.RelativeOrAbsolute)));
+                    r.Fill = new ImageBrush(new BitmapImage(new Uri("C:\\Users\\Redde\\Downloads\\test\\" + floor, UriKind.RelativeOrAbsolute)));
 
                     field.Children.Add(r);
                     Canvas.SetTop(r, cave.posY + sdvigY + j * 32);
                     Canvas.SetLeft(r, cave.posX + sdvigX + i * 32);
                 }
             }
-
-
-            for (int i = 0; i < leftWall.Width / blockSize; i++)
-            {
-                for (int j = 0; j < leftWall.Height / blockSize; j++)
-                {
-                    Rectangle r = new Rectangle();
-                    r.Width = blockSize;
-                    r.Height = blockSize;
-                    r.Fill = new ImageBrush(new BitmapImage(new Uri("C:\\Users\\Redde\\Downloads\\"+ wall, UriKind.RelativeOrAbsolute)));
-
-                    field.Children.Add(r);
-                    Canvas.SetTop(r, cave.posY + sdvigY + j * 32);
-                    Canvas.SetLeft(r, i * 32);
-                }
-            }
-            for (int i = 0; i < rightWall.Width / blockSize; i++)
-            {
-                for (int j = 0; j < rightWall.Height / blockSize; j++)
-                {
-                    Rectangle r = new Rectangle();
-                    r.Width = blockSize;
-                    r.Height = blockSize;
-                    r.Fill = new ImageBrush(new BitmapImage(new Uri("C:\\Users\\Redde\\Downloads\\" + wall, UriKind.RelativeOrAbsolute)));
-
-                    field.Children.Add(r);
-                    Canvas.SetTop(r, cave.posY + sdvigY + j * 32);
-                    Canvas.SetLeft(r, cave.posX + cave.width + sdvigX+i * 32);
-                }
-            }
-            for (int i = 0; i < bottomWall.Width / blockSize; i++)
-            {
-                for (int j = 0; j < bottomWall.Height / blockSize; j++)
-                {
-                    Rectangle r = new Rectangle();
-                    r.Width = blockSize;
-                    r.Height = blockSize;
-                    r.Fill = new ImageBrush(new BitmapImage(new Uri("C:\\Users\\Redde\\Downloads\\" + wall, UriKind.RelativeOrAbsolute)));
-
-                    field.Children.Add(r);
-                    Canvas.SetTop(r, cave.posY + cave.height + sdvigY + j * 32);
-                    Canvas.SetLeft(r, cave.posX + sdvigX + i * 32);
-                }
-            }
-
-            //for (int i = 0; i < saveData.Collisions["Wall"].Count; i++)
-            //{
-            //    BoundingBox position = saveData.Collisions["Wall"][i];
-            //    position.posX += sdvigX;
-            //    position.posY += sdvigY;
-            //
-            //    Rect rect = new Rect();
-            //    rect.Width = position.width;
-            //    rect.Height = position.height;
-            //    rect.X = position.posX;
-            //    rect.Y = position.posY;
-            //    boundsWalls.Add(rect);
-            //
-            //    Rectangle r = new Rectangle();
-            //    r.Width = position.width;
-            //    r.Height = position.height;
-            //   // r.Fill = new SolidColorBrush(Colors.Black);/////////
-            //
-            //
-            //    r.Fill = new ImageBrush(new BitmapImage(new Uri("C:\\Users\\Redde\\Downloads\\wall.jpg", UriKind.RelativeOrAbsolute)));
-            //
-            //
-            //
-            //    field.Children.Add(r);
-            //    Canvas.SetTop(r, position.posY);
-            //    Canvas.SetLeft(r, position.posX);
-            //}
 
             for (int i = 0; i < saveData.Collisions["Wall"].Count; i++)
             {
@@ -329,7 +291,8 @@ namespace Terminal_7.Windows.Game
                         Rectangle r = new Rectangle();
                         r.Width = blockSize;
                         r.Height = blockSize;
-                        r.Fill = new ImageBrush(new BitmapImage(new Uri("C:\\Users\\Redde\\Downloads\\"+ wall, UriKind.RelativeOrAbsolute)));
+                        string textureName = FindTextureName((int)rect.X-sdvigX, (int)rect.Y-sdvigY);
+                        r.Fill = new ImageBrush(new BitmapImage(new Uri("C:\\Users\\Redde\\Downloads\\test\\" + textureName, UriKind.RelativeOrAbsolute)));
 
                         field.Children.Add(r);
                         Canvas.SetTop(r, rect.Y);
@@ -355,14 +318,15 @@ namespace Terminal_7.Windows.Game
                 Rectangle r = new Rectangle();
                 r.Width = position.width;
                 r.Height = position.height;
-                r.Fill = new ImageBrush(new BitmapImage(new Uri($"C:\\Users\\Redde\\Downloads\\coal{random.Next(1,4)}.png", UriKind.RelativeOrAbsolute)));
+                r.Fill = new ImageBrush(new BitmapImage(new Uri($"C:\\Users\\Redde\\Downloads\\test\\coal{random.Next(1, 4)}.png", UriKind.RelativeOrAbsolute)));
+                r.Tag = "Coal";
                 field.Children.Add(r);
                 Canvas.SetTop(r, position.posY);
                 Canvas.SetLeft(r, position.posX);
             }
 
 
-            //field.Children.Add(caveZone);
+            ////field.Children.Add(caveZone);
             //field.Children.Add(leftWall);
             //field.Children.Add(rightWall);
             //field.Children.Add(bottomWall);
@@ -370,7 +334,26 @@ namespace Terminal_7.Windows.Game
             field.Children.Add(player);
 
         }
+        private string FindTextureName(int x, int y)
+        {
+           
+            foreach (var key in saveData.Elements.Keys) 
+            {
+                foreach (var item in saveData.Elements[key])
+                {
+                    if (item.pos.X == x && item.pos.Y == y)
+                    {
+                        return key;
+                    }
+                }
+            }
 
+
+
+
+
+            return "none";
+        }
         private bool IsIntersectCoal()
         {
             playerRect = new Rect(Canvas.GetLeft(player), Canvas.GetTop(player), player.Width, player.Height);
@@ -384,7 +367,17 @@ namespace Terminal_7.Windows.Game
                     {
                         boundsCoal.Remove(r);
                         field.Children.Remove(FindRectangle(r));
+                        //FindRectangle(r).Fill = new SolidColorBrush(System.Windows.Media.Colors.Red);
+                        //new ImageBrush(new BitmapImage(new Uri("C:\\Users\\Redde\\Downloads\\" + floor, UriKind.RelativeOrAbsolute)));
                         score++;
+                        //Rectangle rect = new Rectangle();
+                        //rect.Width = blockSize;
+                        //rect.Height = blockSize;
+                        //rect.Fill = new ImageBrush(new BitmapImage(new Uri("C:\\Users\\Redde\\Downloads\\" + floor, UriKind.RelativeOrAbsolute)));
+                        //
+                        //field.Children.Add(rect);
+                        //Canvas.SetTop(rect, r2.Top);
+                        //Canvas.SetLeft(rect, r2.Left);
                         return true;
                     }
                     return false;
@@ -400,7 +393,7 @@ namespace Terminal_7.Windows.Game
                 if (re is Rectangle)
                 {
                     Rectangle r = (Rectangle)re;
-                    if (r.Width == rect.Width && r.Height == rect.Height && Canvas.GetLeft(r) == rect.X && Canvas.GetTop(r) == rect.Y)
+                    if (r.Width == rect.Width && r.Height == rect.Height && Canvas.GetLeft(r) == rect.X && Canvas.GetTop(r) == rect.Y && r.Tag!=null && r.Tag=="Coal")
                     {
                         return r;
                     }
@@ -436,19 +429,25 @@ namespace Terminal_7.Windows.Game
             if (IsIntersects())
             {
                 dispatcherTimer.Stop();
-                AlertWindow aw = new AlertWindow("STOP", "STOP", "Ok", theme);
-                aw.Show();
+                AlertWindow aw = new AlertWindow("Уведомление", "Поломка!!! Вы повредили устройство.", "Закрыть", theme);
+                if (aw.ShowDialog() == false)
+                {
+                    Close();
+                }
             }
             if (IsIntersectCoal())
             {
                 if (score >= maxScore)
                 {
                     dispatcherTimer.Stop();
-                    AlertWindow aw = new AlertWindow("BLUE", "BLUE", "Ok", theme);
-                    aw.Show();
+                    AlertWindow aw = new AlertWindow("Уведомление", "Все драгоценные камни собраны.", "Закрыть", theme);
+                    if (aw.ShowDialog() == false)
+                    {
+                        Close();
+                    }
                 }
             }
-            infoText.Text = $"Вы собрали {score} из {maxScore}";
+            infoText.Text = $"Собрано драгоценных камней: {score} из {maxScore}";
             // }));
 
         }
@@ -456,6 +455,9 @@ namespace Terminal_7.Windows.Game
         {
             switch (e.Key)
             {
+                case Key.Escape:
+                    Close();
+                    break;
                 case Key.W:
                     Canvas.SetTop(player, Canvas.GetTop(player) - speed);
                     playerRect.Y -= speed;

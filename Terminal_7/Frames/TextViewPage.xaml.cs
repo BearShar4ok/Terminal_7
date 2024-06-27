@@ -27,6 +27,8 @@ namespace Terminal_7.Frames
         public static RoutedCommand SaveFileCommand = new RoutedCommand();
         public static RoutedCommand SendFileCommand = new RoutedCommand();
 
+        ConfigDeserializer permitions;
+
         public TextViewPage(string filename, string theme, bool clearPage = false, bool isItCommand = false)
         {
             InitializeComponent();
@@ -104,7 +106,7 @@ namespace Terminal_7.Frames
                      {
                          Output.Text = Output.Text.Remove(Output.Text.Length - 1, 1);
                          if (Output.Text.Length > 0)
-                            Output.CaretIndex = Output.Text.Length - 1;
+                             Output.CaretIndex = Output.Text.Length - 1;
                          else
                              Output.CaretIndex = 0;
                      }));
@@ -134,14 +136,15 @@ namespace Terminal_7.Frames
             Output.BorderBrush = new SolidColorBrush(Colors.Transparent);
             Output.Cursor = Cursors.None;
             Output.Focusable = true;
+            Output.CaretBrush = new SolidColorBrush(Colors.Transparent);
 
 
-            ConfigDeserializer content;
+
             if (Directory.GetFiles(_filename.RemoveLast(@"\")).Contains(_filename + ".config"))
             {
 
-                content = JsonConvert.DeserializeObject<ConfigDeserializer>(File.ReadAllText(_filename + ".config"));
-                if (!content.CanBeChanged)
+                permitions = JsonConvert.DeserializeObject<ConfigDeserializer>(File.ReadAllText(_filename + ".config"));
+                if (!permitions.CanBeChanged)
                 {
                     Output.IsReadOnly = true;
                 }
@@ -238,6 +241,8 @@ namespace Terminal_7.Frames
                     _caretPos--;
                     break;
                 case Key.Enter:
+                    if (Output.IsReadOnly)
+                        break;
                     int temppos = Output.CaretIndex;
                     Output.Text = Output.Text.Insert(Output.CaretIndex, "\r\n");
                     Output.CaretIndex = temppos + 1;
@@ -245,6 +250,20 @@ namespace Terminal_7.Frames
                 case Key.Right:
                     _caretPos++;
                     break;
+            }
+        }
+
+        private void Output_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (!Output.IsReadOnly)
+                return;
+            if (e.Key == Key.Escape)
+                return;
+
+            var alert = new AlertWindow("Уведомление", "Недостаточно прав для редактирования", "Закрыть", _theme);
+            if (alert.ShowDialog() == false)
+            {
+
             }
         }
     }
