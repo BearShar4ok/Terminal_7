@@ -18,6 +18,8 @@ namespace Terminal_7.Classes
         public const string Themes = "Assets/Themes/";
         // Path to icons folder in theme
         public const string Icons = "Icons";
+        // Path to labirintGame folder in theme
+        public const string LabirintGame = "LabirintGame";
         // Path to directory with assets 
         public const string Assets = "Assets";
         // Path to directory with error.log file 

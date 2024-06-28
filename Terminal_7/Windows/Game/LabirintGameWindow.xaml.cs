@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -63,57 +64,123 @@ namespace Terminal_7.Windows.Game
         Random random = new Random();
 
 
-        string wall = "wall6.png";
-        string floor = "floor6.png";
+
+        const string mapName = "map.json";
+        ImageBrush groungImageBrush = new ImageBrush();
+        ImageBrush floorImageBrush = new ImageBrush();
+        string mapText;
+
+        Dictionary<string, ImageBrush> textures = new Dictionary<string, ImageBrush>();
+
+
+
         public LabirintGameWindow(string theme)
         {
             InitializeComponent();
-
+            if (!ConfigManager.Config.IsDebugMode)
+            {
+                Topmost = true;
+                Cursor = Cursors.None;
+            }
+            else
+            {
+                Topmost = false;
+            }
+            Focus();
+            this.theme = theme;
+            if (!LoadTheme())
+            {
+                Loaded += (sender, e) =>
+                {
+                    Close();
+                };
+                return;
+            }
+            LoadParams();
             WindowStyle = WindowStyle.None;
             WindowState = WindowState.Maximized;
             ResizeMode = ResizeMode.NoResize;
             speed = 4;
-            this.theme = theme;
+
             dispatcherTimer.Tag = 0;
             dispatcherTimer.Tick += dispatcherTimer_Tick;
             dispatcherTimer.Interval = new TimeSpan(10);
-            saveData = LoadMap();
-            maxScore = saveData.Collisions["Item"].Count;
+
+
+
+
+            maxScore = saveData?.Collisions["Item"].Count ?? 0;
             field.Width = Width;
             field.Height = Height;
             field.Focus();
 
-            var nameFont = "Font.ttf";
-            var fullpath = System.IO.Path.GetFullPath(Addition.Themes + theme + "/" + nameFont);
 
-            var families = Fonts.GetFontFamilies(fullpath);
-            var family1 = families.First();
-            infoText.Text = $"Собрано драгоценных камней: {0} из {0}";
-            infoText.FontFamily = family1;
-            infoText.FontSize = ConfigManager.Config.FontSize;
-            infoText.Foreground = (Brush)new BrushConverter().ConvertFromString(ConfigManager.Config.TerminalColor);
 
-            field.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#6F94A7"));
-            //new ImageBrush(new BitmapImage(new Uri("C:\\Users\\Redde\\Downloads\\back.png", UriKind.RelativeOrAbsolute)));      6F94A7
 
-            player.Fill = new SolidColorBrush(System.Windows.Media.Colors.Red);
 
-            this.Loaded += (sender, e) =>
+            Loaded += (sender, e) =>
             {
                 DrawMap();
                 dispatcherTimer.Start();
             };
 
+            KeyDown += KeyPress;
 
 
         }
+        private bool LoadTheme()
+        {
+            var nameFont = "Font.ttf";
+            var fullpath = System.IO.Path.GetFullPath(Addition.Themes + theme + "/" + nameFont);
 
+            var families = Fonts.GetFontFamilies(fullpath);
+            var family1 = families.First();
+
+            infoText.FontFamily = family1;
+
+
+            try
+            {
+                string path = System.IO.Path.GetFullPath(Addition.Themes + theme + "/" + Addition.LabirintGame + "/" + mapName);
+                mapText = File.ReadAllText(path);
+                groungImageBrush.ImageSource = new BitmapImage(new Uri(Addition.Themes + theme + "/" + Addition.LabirintGame + "/backunder.png", UriKind.Relative));
+                
+                floorImageBrush = new ImageBrush(new BitmapImage(new Uri(Addition.Themes + theme + "/" + Addition.LabirintGame  + "/floor.png", UriKind.Relative)));
+
+                saveData = LoadMap();
+                if (saveData == null)
+                    throw new Exception("saveData == null");
+                foreach (var textureName in saveData.Elements.Keys)
+                {
+                    if (textureName == "ToTest.png" || textureName == "Spawn.png")
+                        continue;
+                    textures.Add(textureName, new ImageBrush(new BitmapImage(new Uri(Addition.Themes + theme + "/" + Addition.LabirintGame + "/" + textureName, UriKind.Relative))));
+                }
+                player.Fill = new ImageBrush(new BitmapImage(new Uri(Addition.Themes + theme + "/" + Addition.LabirintGame + "/player.png", UriKind.Relative)));
+            }
+            catch (Exception)
+            {
+                dispatcherTimer.Stop();
+                AlertWindow aw = new AlertWindow("Ошибка!!!", "Файлы для запуска шахты повреждены.", "Закрыть", theme);
+                if (aw.ShowDialog() == false)
+                {
+                    //Close();
+                }
+                return false;
+            }
+            return true;
+        }
+        private void LoadParams()
+        {
+            infoText.Text = $"Собрано драгоценных камней: {0} из {0}";
+            infoText.FontSize = ConfigManager.Config.FontSize;
+            infoText.Foreground = (Brush)new BrushConverter().ConvertFromString(ConfigManager.Config.TerminalColor);
+            field.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#6F94A7"));
+
+        }
         private SaveData LoadMap()
         {
-            var text = File.ReadAllText("C:\\Users\\Redde\\Downloads\\testToTerminal4.json");
-
-            var data = JsonConvert.DeserializeObject<List<Dictionary<string, dynamic>>>(text);
-
+            var data = JsonConvert.DeserializeObject<List<Dictionary<string, dynamic>>>(mapText);
             var result = new SaveData();
 
             foreach (var pair in data[0])
@@ -183,15 +250,22 @@ namespace Terminal_7.Windows.Game
 
 
             return result;
+
+
+
+
+
         }
         private void DrawMap()
         {
-           
+
             int sdvigX = (int)(field.ActualWidth - cave.width) / 2;
             int sdvigY = (int)(field.ActualHeight - cave.height) / 2;
             player.Width = 32;
             player.Height = 32;
-            player.Fill = new ImageBrush(new BitmapImage(new Uri("C:\\Users\\Redde\\Downloads\\test\\player.png", UriKind.RelativeOrAbsolute)));
+
+
+
 
             Canvas.SetTop(player, saveData.Elements["Spawn.png"][0].pos.Y + sdvigY + 8);
             Canvas.SetLeft(player, saveData.Elements["Spawn.png"][0].pos.X + sdvigX + 8);
@@ -212,11 +286,9 @@ namespace Terminal_7.Windows.Game
             underground.Width = field.ActualWidth;
             underground.Height = field.ActualHeight;
 
-            ImageBrush imageBrush = new ImageBrush();
-            imageBrush.ImageSource = new BitmapImage(new Uri("C:\\Users\\Redde\\Downloads\\test\\backunder2.png", UriKind.RelativeOrAbsolute));
-            imageBrush.Stretch = Stretch.None; // Устанавливаем Stretch в None
-            imageBrush.AlignmentY = AlignmentY.Top;// Устанавливаем Stretch в None
-            underground.Fill = imageBrush;
+            groungImageBrush.Stretch = Stretch.None; // Устанавливаем Stretch в None
+            groungImageBrush.AlignmentY = AlignmentY.Top;// Устанавливаем Stretch в None
+            underground.Fill = groungImageBrush;
 
             //leftWall.Opacity = 0.3;
             Canvas.SetTop(underground, cave.posY + sdvigY);
@@ -259,7 +331,7 @@ namespace Terminal_7.Windows.Game
                     Rectangle r = new Rectangle();
                     r.Width = blockSize;
                     r.Height = blockSize;
-                    r.Fill = new ImageBrush(new BitmapImage(new Uri("C:\\Users\\Redde\\Downloads\\test\\" + floor, UriKind.RelativeOrAbsolute)));
+                    r.Fill = floorImageBrush;
 
                     field.Children.Add(r);
                     Canvas.SetTop(r, cave.posY + sdvigY + j * 32);
@@ -291,8 +363,24 @@ namespace Terminal_7.Windows.Game
                         Rectangle r = new Rectangle();
                         r.Width = blockSize;
                         r.Height = blockSize;
-                        string textureName = FindTextureName((int)rect.X-sdvigX, (int)rect.Y-sdvigY);
-                        r.Fill = new ImageBrush(new BitmapImage(new Uri("C:\\Users\\Redde\\Downloads\\test\\" + textureName, UriKind.RelativeOrAbsolute)));
+                        string textureName = FindTextureName((int)rect.X - sdvigX, (int)rect.Y - sdvigY);
+                        r.Fill = textures[textureName];
+                        //try
+                        //{
+                        //   // r.Fill = new ImageBrush(new BitmapImage(new Uri(Addition.Themes + theme+"/" + Addition.LabirintGame + "/" + textureName, UriKind.Relative)));
+                        //   
+                        //}
+                        //catch (Exception)
+                        //{
+                        //    dispatcherTimer.Stop();
+                        //    AlertWindow aw = new AlertWindow("Ошибка!!!", "У шахты повреждены стены.", "Закрыть", theme);
+                        //    if (aw.ShowDialog() == false)
+                        //    {
+                        //       // Close();
+                        //    }
+                        //    return;
+                        //}
+
 
                         field.Children.Add(r);
                         Canvas.SetTop(r, rect.Y);
@@ -318,7 +406,21 @@ namespace Terminal_7.Windows.Game
                 Rectangle r = new Rectangle();
                 r.Width = position.width;
                 r.Height = position.height;
-                r.Fill = new ImageBrush(new BitmapImage(new Uri($"C:\\Users\\Redde\\Downloads\\test\\coal{random.Next(1, 4)}.png", UriKind.RelativeOrAbsolute)));
+
+                try
+                {
+                    r.Fill = new ImageBrush(new BitmapImage(new Uri(Addition.Themes + theme + "/" + Addition.LabirintGame + "/" + $"coal{random.Next(1, 4)}.png", UriKind.Relative)));
+                }
+                catch (Exception)
+                {
+                    dispatcherTimer.Stop();
+                    AlertWindow aw = new AlertWindow("Ошибка!!!", "У шахты повреждены стены.", "Закрыть", theme);
+                    if (aw.ShowDialog() == false)
+                    {
+                        //Close();
+                    }
+                    return;
+                }
                 r.Tag = "Coal";
                 field.Children.Add(r);
                 Canvas.SetTop(r, position.posY);
@@ -336,8 +438,8 @@ namespace Terminal_7.Windows.Game
         }
         private string FindTextureName(int x, int y)
         {
-           
-            foreach (var key in saveData.Elements.Keys) 
+
+            foreach (var key in saveData.Elements.Keys)
             {
                 foreach (var item in saveData.Elements[key])
                 {
@@ -347,11 +449,6 @@ namespace Terminal_7.Windows.Game
                     }
                 }
             }
-
-
-
-
-
             return "none";
         }
         private bool IsIntersectCoal()
@@ -367,17 +464,7 @@ namespace Terminal_7.Windows.Game
                     {
                         boundsCoal.Remove(r);
                         field.Children.Remove(FindRectangle(r));
-                        //FindRectangle(r).Fill = new SolidColorBrush(System.Windows.Media.Colors.Red);
-                        //new ImageBrush(new BitmapImage(new Uri("C:\\Users\\Redde\\Downloads\\" + floor, UriKind.RelativeOrAbsolute)));
                         score++;
-                        //Rectangle rect = new Rectangle();
-                        //rect.Width = blockSize;
-                        //rect.Height = blockSize;
-                        //rect.Fill = new ImageBrush(new BitmapImage(new Uri("C:\\Users\\Redde\\Downloads\\" + floor, UriKind.RelativeOrAbsolute)));
-                        //
-                        //field.Children.Add(rect);
-                        //Canvas.SetTop(rect, r2.Top);
-                        //Canvas.SetLeft(rect, r2.Left);
                         return true;
                     }
                     return false;
@@ -393,7 +480,7 @@ namespace Terminal_7.Windows.Game
                 if (re is Rectangle)
                 {
                     Rectangle r = (Rectangle)re;
-                    if (r.Width == rect.Width && r.Height == rect.Height && Canvas.GetLeft(r) == rect.X && Canvas.GetTop(r) == rect.Y && r.Tag!=null && r.Tag=="Coal")
+                    if (r.Width == rect.Width && r.Height == rect.Height && Canvas.GetLeft(r) == rect.X && Canvas.GetTop(r) == rect.Y && r.Tag != null && r.Tag == "Coal")
                     {
                         return r;
                     }
@@ -423,8 +510,6 @@ namespace Terminal_7.Windows.Game
 
         private void dispatcherTimer_Tick(object sender, EventArgs e)
         {
-            //Dispatcher.BeginInvoke(new Action(() =>
-            //{
 
             if (IsIntersects())
             {
@@ -451,7 +536,7 @@ namespace Terminal_7.Windows.Game
             // }));
 
         }
-        private void field_KeyDown(object sender, KeyEventArgs e)
+        private void KeyPress(object sender, KeyEventArgs e)
         {
             switch (e.Key)
             {

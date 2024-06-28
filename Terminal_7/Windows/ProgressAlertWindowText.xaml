@@ -5,7 +5,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Terminal_7.Windows"
         mc:Ignorable="d"
-        Title="ProgressAlertWindowText" Height="450" Width="800" Loaded="Window_Loaded">
+        WindowStyle="None"
+        Height="300" Width="500"
+        AllowsTransparency="True"
+        Cursor="None"
+        Title="ProgressAlertWindowText"  Loaded="Window_Loaded">
     <Border BorderThickness="2" BorderBrush="Red">
         <Grid>
 
