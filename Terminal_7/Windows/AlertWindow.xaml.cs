@@ -59,6 +59,9 @@ namespace Terminal_7.Windows
             TbMessage.Text = message;
             LblButton.Content = button;
 
+            border.BorderBrush = (Brush)new BrushConverter().ConvertFromString(ConfigManager.Config.TerminalColorSecond);
+
+
             LblTitle.FontSize = ConfigManager.Config.FontSize;
             LblTitle.Foreground = (Brush)new BrushConverter().ConvertFromString(ConfigManager.Config.TerminalColor);
 

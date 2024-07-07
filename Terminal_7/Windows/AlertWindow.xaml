@@ -10,13 +10,14 @@
         Height="300" Width="500"
         AllowsTransparency="True"
         Cursor="None">
-    <Border BorderThickness="2" BorderBrush="Red">
+    <Border x:Name="border" BorderThickness="2" BorderBrush="Red">
         <Grid>
 
             <Grid.RowDefinitions>
-                <RowDefinition Height="20*"/>
-                <RowDefinition Height="55*"/>
-                <RowDefinition Height="25*"/>
+                <RowDefinition Height="59*"/>
+                <RowDefinition Height="163*"/>
+                <RowDefinition Height="10*"/>
+                <RowDefinition Height="64*"/>
             </Grid.RowDefinitions>
 
             <Grid.ColumnDefinitions>
@@ -30,8 +31,8 @@
                 <Separator Background="Black" />
             </StackPanel>
 
-            <TextBlock x:Name="TbMessage" Background="Transparent" Grid.ColumnSpan="3" Grid.Row="1" TextAlignment="Center" FontSize="20" TextWrapping="Wrap"/>
-            <Border x:Name="button" BorderBrush="Black" BorderThickness="3" Grid.Row="2" Grid.Column="1" Background="#D3A87C" Margin="0,0,0,5">
+            <TextBlock x:Name="TbMessage" Background="Transparent" Grid.ColumnSpan="3" TextAlignment="Center" FontSize="20" TextWrapping="Wrap" Margin="0,59,0,0" Grid.RowSpan="2"/>
+            <Border x:Name="button" BorderBrush="Black" BorderThickness="3" Grid.Row="2" Background="#759127" Margin="165,0,165,5" Grid.ColumnSpan="3" Grid.RowSpan="2">
                 <Label x:Name="LblButton" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
             </Border>
         </Grid>

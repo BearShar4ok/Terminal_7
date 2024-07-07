@@ -147,6 +147,8 @@ namespace Terminal_7.Windows.Game
                 
                 floorImageBrush = new ImageBrush(new BitmapImage(new Uri(Addition.Themes + theme + "/" + Addition.LabirintGame  + "/floor.png", UriKind.Relative)));
 
+                field.Background = new ImageBrush(new BitmapImage(new Uri(Addition.Themes + theme + "/" + Addition.LabirintGame + "/backsky.png", UriKind.Relative)));
+
                 saveData = LoadMap();
                 if (saveData == null)
                     throw new Exception("saveData == null");
@@ -175,7 +177,7 @@ namespace Terminal_7.Windows.Game
             infoText.Text = $"Собрано драгоценных камней: {0} из {0}";
             infoText.FontSize = ConfigManager.Config.FontSize;
             infoText.Foreground = (Brush)new BrushConverter().ConvertFromString(ConfigManager.Config.TerminalColor);
-            field.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#6F94A7"));
+           // field.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#6F94A7"));
 
         }
         private SaveData LoadMap()
@@ -364,22 +366,24 @@ namespace Terminal_7.Windows.Game
                         r.Width = blockSize;
                         r.Height = blockSize;
                         string textureName = FindTextureName((int)rect.X - sdvigX, (int)rect.Y - sdvigY);
-                        r.Fill = textures[textureName];
-                        //try
-                        //{
-                        //   // r.Fill = new ImageBrush(new BitmapImage(new Uri(Addition.Themes + theme+"/" + Addition.LabirintGame + "/" + textureName, UriKind.Relative)));
-                        //   
-                        //}
-                        //catch (Exception)
-                        //{
-                        //    dispatcherTimer.Stop();
-                        //    AlertWindow aw = new AlertWindow("Ошибка!!!", "У шахты повреждены стены.", "Закрыть", theme);
-                        //    if (aw.ShowDialog() == false)
-                        //    {
-                        //       // Close();
-                        //    }
-                        //    return;
-                        //}
+                        //r.Fill = textures[textureName];
+
+
+                        try
+                        {
+                            r.Fill = new ImageBrush(new BitmapImage(new Uri(Addition.Themes + theme+"/" + Addition.LabirintGame + "/" + textureName, UriKind.Relative)));
+                           
+                        }
+                        catch (Exception)
+                        {
+                            dispatcherTimer.Stop();
+                            AlertWindow aw = new AlertWindow("Ошибка!!!", "У шахты повреждены стены.", "Закрыть", theme);
+                            if (aw.ShowDialog() == false)
+                            {
+                               // Close();
+                            }
+                            return;
+                        }
 
 
                         field.Children.Add(r);
@@ -449,7 +453,7 @@ namespace Terminal_7.Windows.Game
                     }
                 }
             }
-            return "none";
+            return "default.png";
         }
         private bool IsIntersectCoal()
         {
