@@ -15,7 +15,7 @@ using Terminal_7.Windows;
 
 namespace Terminal_7.Frames
 {
-    public partial class TextViewPage : Page
+    public partial class TextViewPage : Page, IPage
     {
         protected string _filename;
         protected string _theme;
@@ -46,7 +46,9 @@ namespace Terminal_7.Frames
 
             LoadParams();
 
-            Application.Current.MainWindow.KeyDown += AdditionalKeys;
+            //Application.Current.MainWindow.KeyDown += AdditionalKeys;
+            Application.Current.MainWindow.PreviewKeyDown += AdditionalKeys;
+
             Scroller.Focus();
             LoadText();
         }
@@ -59,7 +61,9 @@ namespace Terminal_7.Frames
         {
             _update = false;
             Addition.NavigationService.Navigated -= RemoveLast;
-            Application.Current.MainWindow.KeyDown -= AdditionalKeys;
+            //Application.Current.MainWindow.KeyDown -= AdditionalKeys;
+            Application.Current.MainWindow.PreviewKeyDown -= AdditionalKeys;
+
         }
 
         public void Reload()
@@ -139,7 +143,6 @@ namespace Terminal_7.Frames
             Output.CaretBrush = new SolidColorBrush(Colors.Transparent);
 
 
-
             if (Directory.GetFiles(_filename.RemoveLast(@"\")).Contains(_filename + ".config"))
             {
 
@@ -148,6 +151,10 @@ namespace Terminal_7.Frames
                 {
                     Output.IsReadOnly = true;
                 }
+            }
+            else
+            {
+                Output.IsReadOnly = true;
             }
             SaveFileCommand.InputGestures.Add(new KeyGesture(Key.S, ModifierKeys.Control));
             SendFileCommand.InputGestures.Add(new KeyGesture(Key.Enter, ModifierKeys.Control));
@@ -231,39 +238,117 @@ namespace Terminal_7.Frames
 
         protected void AdditionalKeys(object sender, KeyEventArgs e)
         {
+            if (Keyboard.Modifiers == ModifierKeys.Control || Keyboard.Modifiers == ModifierKeys.Alt || Keyboard.Modifiers == ModifierKeys.Windows)
+            {
+                return;
+            }
             switch (e.Key)
             {
+                case Key.Left:
+                    _caretPos--;
+                    return;
+                case Key.Right:
+                    _caretPos++;
+                    return;
+                case Key.Down:
+                    int currentLineIndex = Output.GetLineIndexFromCharacterIndex(_caretPos);
+                    if (currentLineIndex < Output.LineCount - 1)
+                    {
+                        _caretPos = Output.GetCharacterIndexFromLineIndex(currentLineIndex + 1);
+                        Output.CaretIndex = _caretPos;
+                    }
+                    return;
+                case Key.Up:
+                    currentLineIndex = Output.GetLineIndexFromCharacterIndex(_caretPos);
+                    if (currentLineIndex > 0)
+                    {
+                        _caretPos = Output.GetCharacterIndexFromLineIndex(currentLineIndex - 1);
+                        Output.CaretIndex = _caretPos;
+                    }
+                    return;
+                /*case Key.Down:
+                    int currentLineIndex = Output.GetLineIndexFromCharacterIndex(_caretPos);
+                    if (currentLineIndex < Output.LineCount - 1)
+                    {
+                        // Получаем индекс символа начала предыдущей строки
+                        int nextLineStartIndex = Output.GetCharacterIndexFromLineIndex(currentLineIndex - 1);
+
+                        // Получаем индекс символа конца предыдущей строки
+                        int nextLineEndIndex = Output.GetCharacterIndexFromLineIndex(currentLineIndex) - 1;
+
+                        // Вычисляем относительное смещение курсора в текущей строке
+                        int offsetInCurrentLine = _caretPos - Output.GetCharacterIndexFromLineIndex(currentLineIndex);
+
+                        // Устанавливаем курсор в соответствующую позицию в предыдущей строке
+                        //int newCaretIndex = nextLineStartIndex + Math.Min(offsetInCurrentLine, previousLineEndIndex - previousLineStartIndex);
+                        Output.CaretIndex = _caretPos;
+                    }
+                    return;
+                case Key.Up:
+                    currentLineIndex = Output.GetLineIndexFromCharacterIndex(_caretPos);
+                    if (currentLineIndex > 0)//currentLineIndex < Output.LineCount - 1)
+                    {
+                        char a = Output.Text[_caretPos - 1];
+
+                        int nextLineStartIndex = Output.GetCharacterIndexFromLineIndex(currentLineIndex - 1);
+                        char b = Output.Text[nextLineStartIndex];
+
+                        int nextLineEndIndex = Output.GetCharacterIndexFromLineIndex(currentLineIndex) - 2;
+                        char c = Output.Text[nextLineEndIndex];
+
+                        int nowLineStartIndex = Output.GetCharacterIndexFromLineIndex(currentLineIndex);
+                        char bb = Output.Text[nextLineStartIndex];
+
+                        int nowLen = _caretPos - nowLineStartIndex;
+                        int nextLen = nextLineEndIndex - nextLineStartIndex;
+                        if (nowLen > nextLen)
+                        {
+                            _caretPos = nextLineEndIndex;
+                        }
+                        else
+                        {
+                            _caretPos = nextLineStartIndex + (_caretPos - nowLineStartIndex);
+                        }
+
+                        if (currentLineIndex == Output.LineCount - 1)
+                        {
+                            _caretPos--;
+                        }
+
+                        Output.CaretIndex = _caretPos;
+                        // Устанавливаем курсор в соответствующую позицию в следующей строке
+                        // int newCaretIndex = nextLineStartIndex + Math.Min(offsetInCurrentLine, nextLineEndIndex - nextLineStartIndex);
+
+                    }
+                    return;*/
                 case Key.Escape:
                     Closing();
                     Addition.NavigationService.GoBack();
-                    break;
-                case Key.Left:
-                    _caretPos--;
-                    break;
-                case Key.Enter:
-                    if (Output.IsReadOnly)
-                        break;
-                    int temppos = Output.CaretIndex;
-                    Output.Text = Output.Text.Insert(Output.CaretIndex, "\r\n");
-                    Output.CaretIndex = temppos + 1;
-                    break;
-                case Key.Right:
-                    _caretPos++;
-                    break;
+                    return;
             }
-        }
+            if (!Output.IsReadOnly)// можно редактировать
+            {
+                switch (e.Key)
+                {
 
-        private void Output_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (!Output.IsReadOnly)
-                return;
-            if (e.Key == Key.Escape)
-                return;
+                    case Key.Enter:
+                        if (Output.IsReadOnly)
+                            break;
+                        int temppos = Output.CaretIndex;
+                        Output.Text = Output.Text.Insert(Output.CaretIndex, "\r\n");
+                        Output.CaretIndex = temppos + 1;
+                        break;
 
-            var alert = new AlertWindow("Уведомление", "Недостаточно прав для редактирования", "Закрыть", _theme);
-            if (alert.ShowDialog() == false)
+                }
+            }
+            else
             {
 
+                var alert = new AlertWindow("Уведомление", "Недостаточно прав для редактирования", "Закрыть", _theme);
+                if (alert.ShowDialog() == false)
+                {
+
+                }
             }
         }
     }

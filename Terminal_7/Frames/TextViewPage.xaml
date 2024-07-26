@@ -21,7 +21,7 @@
 
             <Grid>
 
-                <TextBox x:Name="Output" Focusable="True" TextWrapping="Wrap" KeyDown="Output_KeyDown">
+                <TextBox x:Name="Output" Focusable="True" TextWrapping="Wrap">
                     <TextBox.Style>
                         <Style TargetType="TextBox">
                             <Setter Property="FocusVisualStyle" Value="{x:Null}"/>

@@ -22,9 +22,10 @@ namespace Terminal_7.Windows
         Random r = new Random();
         DispatcherTimer dispatcherTimer = new DispatcherTimer();
         bool isWait = false;
+        bool flag = false;
         int waitTime;
         int nowTime = 0;
-        int maxLen = 10;
+        int maxLen;
         int indexCount = 0;
         public ProgressAlertWindowText()
         {
@@ -58,26 +59,36 @@ namespace Terminal_7.Windows
                 }
                 else
                 {
+                    indexCount++;
                     ProgresBar.Text = "";
                     for (int i = 0; i < indexCount; i++)
                     {
                         ProgresBar.Text += "|";
                     }
-                    for (int i = indexCount; i < maxLen; i++)
+                    for (int i = indexCount; i <= maxLen; i++)
                     {
                         ProgresBar.Text += ".";
                     }
-                    indexCount++;
+                    
                     isWait = false;
                     nowTime = 0;
                 }
             }
 
-            if (indexCount >= maxLen)
+
+            if (indexCount > maxLen)
             {
                 dispatcherTimer.Stop();
-
-                Close();
+                Thread newThread = new Thread(() =>
+                {
+                    Thread.Sleep(1000);
+                    Dispatcher.BeginInvoke(new Action(() =>
+                    {
+                        
+                        Close();
+                    }));
+                });
+                newThread.Start();
             }
         }
 
@@ -122,7 +133,6 @@ namespace Terminal_7.Windows
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             maxLen = (int)(ProgresBar.ActualWidth / Math.Ceiling(GetSizeContent(ProgresBar, ".").Width));
-
             ProgresBar.Text = new string('.', maxLen);
         }
         private static Size GetSizeContent(TextBlock tb, string content) => MeasureString(content, tb.FontFamily, tb.FontStyle,

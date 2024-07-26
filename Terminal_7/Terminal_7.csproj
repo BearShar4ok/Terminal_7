@@ -68,6 +68,7 @@
     <Compile Include="Classes\DevicesManager.cs" />
     <Compile Include="Classes\Enums.cs" />
     <Compile Include="Classes\FragmentText.cs" />
+    <Compile Include="Classes\IPage.cs" />
     <Compile Include="Classes\Logger.cs" />
     <Compile Include="Classes\Manager.cs" />
     <Compile Include="Classes\RequestSender.cs" />
@@ -203,6 +204,8 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Frames\ViewPages\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
