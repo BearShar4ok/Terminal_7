@@ -7,7 +7,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using Terminal_7.Classes;
 
-namespace Terminal_7.Frames
+namespace Terminal_7.Frames.ViewPages
 {
     public partial class PictureViewPage : Page
     {

@@ -1,22 +1,20 @@
-﻿<Page x:Class="Terminal_7.Frames.AudioViewPage"
+﻿<Page x:Class="Terminal_7.Frames.ViewPages.PictureViewPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:local="clr-namespace:Terminal_7.Frames"
+      xmlns:local="clr-namespace:Terminal_7.Frames.ViewPages"
       mc:Ignorable="d"
-    Title="AudioViewPage"
-    Focusable="False">
+      Title="PictureViewPage"
+      Focusable="False">
 
     <Grid>
-        <TextBlock x:Name="ProgressBar"
-                HorizontalAlignment="Center" VerticalAlignment="Center" 
-                Focusable="False">
-            <TextBlock.Style>
-                <Style TargetType="TextBlock">
+        <Image x:Name="Picture"  Focusable="False" Stretch="Fill">
+            <Image.Style>
+                <Style TargetType="Image">
                     <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
                 </Style>
-            </TextBlock.Style>
-        </TextBlock>
+            </Image.Style>
+        </Image>
     </Grid>
 </Page>

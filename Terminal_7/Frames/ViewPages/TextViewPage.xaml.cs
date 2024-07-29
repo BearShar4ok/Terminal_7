@@ -13,9 +13,9 @@ using System.Windows.Threading;
 using Terminal_7.Classes;
 using Terminal_7.Windows;
 
-namespace Terminal_7.Frames
+namespace Terminal_7.Frames.ViewPages
 {
-    public partial class TextViewPage : Page, IPage
+    public partial class TextViewPage : Page
     {
         protected string _filename;
         protected string _theme;
@@ -223,7 +223,7 @@ namespace Terminal_7.Frames
         }
         private void SendFile(object sender, ExecutedRoutedEventArgs e)
         {
-            ProgressAlertWindowText pw = new ProgressAlertWindowText("Отправка файлов", "Ожидайте. Идет отправка...", _theme);
+            ProgressAlertWindowText pw = new ProgressAlertWindowText("Отправка файлов", "Ожидайте. Идет отправка...",0,20,true, _theme);
             if (pw.ShowDialog() == false)
             {
 

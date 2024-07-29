@@ -6,7 +6,7 @@ using System.Windows.Input;
 using System.Windows.Navigation;
 using Terminal_7.Classes;
 
-namespace Terminal_7.Frames
+namespace Terminal_7.Frames.ViewPages
 {
     public partial class VideoViewPage : Page
     {

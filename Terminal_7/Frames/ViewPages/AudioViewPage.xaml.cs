@@ -10,7 +10,7 @@ using System.Windows.Navigation;
 using System.Windows.Threading;
 using Terminal_7.Classes;
 
-namespace Terminal_7.Frames
+namespace Terminal_7.Frames.ViewPages
 {
     public partial class AudioViewPage : Page
     {

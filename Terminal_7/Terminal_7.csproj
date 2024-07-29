@@ -68,26 +68,26 @@
     <Compile Include="Classes\DevicesManager.cs" />
     <Compile Include="Classes\Enums.cs" />
     <Compile Include="Classes\FragmentText.cs" />
-    <Compile Include="Classes\IPage.cs" />
+    <Compile Include="Classes\BasePage.cs" />
     <Compile Include="Classes\Logger.cs" />
     <Compile Include="Classes\Manager.cs" />
     <Compile Include="Classes\RequestSender.cs" />
-    <Compile Include="Frames\AudioViewPage.xaml.cs">
+    <Compile Include="Frames\ViewPages\AudioViewPage.xaml.cs">
       <DependentUpon>AudioViewPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Frames\LoadingPage.xaml.cs">
       <DependentUpon>LoadingPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Frames\PictureViewPage.xaml.cs">
+    <Compile Include="Frames\ViewPages\PictureViewPage.xaml.cs">
       <DependentUpon>PictureViewPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Frames\TechnicalViewPage.xaml.cs">
+    <Compile Include="Frames\ViewPages\TechnicalViewPage.xaml.cs">
       <DependentUpon>TechnicalViewPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Frames\TextViewPage.xaml.cs">
+    <Compile Include="Frames\ViewPages\TextViewPage.xaml.cs">
       <DependentUpon>TextViewPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Frames\VideoViewPage.xaml.cs">
+    <Compile Include="Frames\ViewPages\VideoViewPage.xaml.cs">
       <DependentUpon>VideoViewPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Windows\AlertWindow.xaml.cs">
@@ -111,7 +111,7 @@
     <Compile Include="Windows\ProgressAlertWindowText.xaml.cs">
       <DependentUpon>ProgressAlertWindowText.xaml</DependentUpon>
     </Compile>
-    <Page Include="Frames\AudioViewPage.xaml">
+    <Page Include="Frames\ViewPages\AudioViewPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -119,19 +119,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Frames\PictureViewPage.xaml">
+    <Page Include="Frames\ViewPages\PictureViewPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Frames\TechnicalViewPage.xaml">
+    <Page Include="Frames\ViewPages\TechnicalViewPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Frames\TextViewPage.xaml">
+    <Page Include="Frames\ViewPages\TextViewPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Frames\VideoViewPage.xaml">
+    <Page Include="Frames\ViewPages\VideoViewPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -204,8 +204,6 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Frames\ViewPages\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

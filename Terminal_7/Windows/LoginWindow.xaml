@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Terminal_7.Windows"
         mc:Ignorable="d"
-        Title="LoginWindow" Height="450" Width="800">
+        Title="LoginWindow" Height="250" Width="420" AllowsTransparency="True" >
     <Window.CommandBindings>
         <CommandBinding Command="{x:Static local:LoginWindow.OpenHackPageCommand}" Executed="OpenHackPage"/>
     </Window.CommandBindings>
@@ -16,14 +16,14 @@
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="auto"/>
+            <RowDefinition Height="1*"/>
             <RowDefinition Height="10"/>
-            <RowDefinition Height="auto"/>
+            <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
-        <Label x:Name="LblLogin"  Grid.Column="0" Grid.Row="0" HorizontalAlignment="Left" Content="Логин:" Background="Transparent" BorderThickness="0" Focusable="False" />
-        <TextBox x:Name="TBLogin" Text="LOgin" Grid.Column="2" Grid.Row="0" HorizontalAlignment="Left" Background="Transparent" BorderThickness="0" VerticalContentAlignment="Center"/>
+        <TextBox x:Name="LblLogin"  Grid.Column="0" Grid.Row="0" HorizontalAlignment="Left" Text="Логин:" Background="Transparent" BorderThickness="0" Focusable="False" IsReadOnly="True" VerticalContentAlignment="Bottom"/>
+        <TextBox x:Name="TBLogin" Text="LOgin" Grid.Column="2" Grid.Row="0" HorizontalAlignment="Left" Background="Transparent" BorderThickness="0" VerticalContentAlignment="Bottom"/>
 
-        <Label x:Name="LblPassword" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Left" Content="Пароль:" Background="Transparent" BorderThickness="0" Focusable="False" />
-        <TextBox x:Name="TBPassword" Text="password" Grid.Column="2" Grid.Row="2" HorizontalAlignment="Left" Background="Transparent" BorderThickness="0"/>
+        <TextBox x:Name="LblPassword" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Left" Text="Пароль:" Background="Transparent" BorderThickness="0" Focusable="False" IsReadOnly="True" VerticalContentAlignment="Top" />
+        <TextBox x:Name="TBPassword" Text="password" Grid.Column="2" Grid.Row="2" HorizontalAlignment="Left" Background="Transparent" BorderThickness="0" VerticalContentAlignment="Top"/>
     </Grid>
 </Window>

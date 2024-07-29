@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Terminal_7.Windows.Game;
 using Terminal_7.Windows;
+using Terminal_7.Frames.ViewPages;
 
 namespace Terminal_7
 {

@@ -8,11 +8,16 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Title="LoadingPage"
       Focusable="False">
-
+    <Page.CommandBindings>
+        <CommandBinding Command="{x:Static local:LoadingPage.CopyCommand}" Executed="ExecuteCopyCommand"/>
+        <CommandBinding Command="{x:Static local:LoadingPage.PasteCommand}" Executed="ExecutePasteCommand"/>
+        <CommandBinding Command="{x:Static local:LoadingPage.DeleteCommand}" Executed="ExecuteDeleteCommand"/>
+    </Page.CommandBindings>
     <Grid x:Name="MainFild" Background="Transparent" >
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition/>
+            <RowDefinition Height="50"/>
         </Grid.RowDefinitions>
         <Label x:Name="LblInfo" Focusable="False" Grid.Row="0" Background="Transparent"/>
         <!-- <TextBlock TextWrapping="Wrap" x:Name="Print" Background="Transparent"/> -->
@@ -21,5 +26,9 @@
 
             <!--  📂🖹🖻🖺🖾 🖼  G:/Coding/MyProjects/Terminal_XP/Terminal_XP/Assets/Themes/Fallout/folder.png -->
         </ListBox>
+        <StackPanel x:Name="PanelInfo" Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Image x:Name="HackIco" Width="50"/>
+            <Image x:Name="CopyIco" Width="50"/>
+        </StackPanel>
     </Grid>
 </Page>

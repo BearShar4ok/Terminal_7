@@ -15,5 +15,6 @@
         public uint LengthHackString { get; set; }
         public bool DifficultyInfo { get; set; }
         public bool IsDebugMode { get; set; }
+        public bool IsFlashcardHack { get; set; }
     }
 }

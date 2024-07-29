@@ -9,6 +9,7 @@ using System.Windows.Navigation;
 using System.Windows.Threading;
 using Terminal_7.Frames;
 using Terminal_7.Windows.Game;
+using Terminal_7.Frames.ViewPages;
 
 namespace Terminal_7.Classes
 {

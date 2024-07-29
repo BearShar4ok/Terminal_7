@@ -16,18 +16,22 @@ using System.Windows.Controls.Primitives;
 
 namespace Terminal_7.Frames
 {
-    public enum IconType { Default, Folder, Image, Text, Audio, Video, Command, Execute }
+    public enum IconTypeExplorer { Default, Folder, Image, Text, Audio, Video, Command, Execute }
+    public enum IconTypeNotification { Copy, Hack }
 
     //  🖹🖻🖺
 
     public partial class LoadingPage : Page
     {
         private const string AccessFileToReadDisk = "READ_DISK.txt";
+        private const string AccessFileToHack = "HACK.txt";
         private const string PrevDirText = "..";
         private const string SystemFolder = "System Volume Information";
         private const string ExtensionConfig = ".config";
         private const string _NetDiskovText = "Доступных дисков нет...";
-        private readonly Dictionary<IconType, string> Icons;
+        private const string TrashbinPath = "\\TrashBin";
+        private readonly Dictionary<IconTypeExplorer, string> IconsExplorer;
+        private readonly Dictionary<IconTypeNotification, string> IconsNotification;
 
         private string _theme;
         private int _deepOfPath;
@@ -37,8 +41,16 @@ namespace Terminal_7.Frames
 
 
         private Dictionary<string, ListBoxItem> _disks = new Dictionary<string, ListBoxItem>();
+        private List<string> _disksToHack = new List<string>();
         private Dictionary<string, int> _huckAttempts = new Dictionary<string, int>();
 
+        public static RoutedCommand CopyCommand = new RoutedCommand();
+        public static RoutedCommand PasteCommand = new RoutedCommand();
+        public static RoutedCommand DeleteCommand = new RoutedCommand();
+        private string copyPath;
+        private string disksPath;
+
+        private bool hackAllow;
 
         public LoadingPage(string theme)
         {
@@ -52,6 +64,10 @@ namespace Terminal_7.Frames
 
             KeepAlive = true;
 
+            CopyCommand.InputGestures.Add(new KeyGesture(Key.C, ModifierKeys.Control));
+            PasteCommand.InputGestures.Add(new KeyGesture(Key.V, ModifierKeys.Control));
+            DeleteCommand.InputGestures.Add(new KeyGesture(Key.D, ModifierKeys.Control));
+
             LblInfo.Content = _NetDiskovText;
 
             LB.SelectionMode = SelectionMode.Single;
@@ -61,17 +77,24 @@ namespace Terminal_7.Frames
 
             KeyDown += AdditionalKeys;
 
-            Icons = new Dictionary<IconType, string>()
+            IconsExplorer = new Dictionary<IconTypeExplorer, string>()
             {
-                { IconType.Default, Path.GetFullPath(Addition.Themes + theme +  $@"/{Addition.Icons}/default.png") },
-                { IconType.Folder, Path.GetFullPath(Addition.Themes + theme +  $@"/{Addition.Icons}/folder.png") },
-                { IconType.Image, Path.GetFullPath(Addition.Themes + theme +  $@"/{Addition.Icons}/image.png") },
-                { IconType.Text, Path.GetFullPath(Addition.Themes + theme +  $@"/{Addition.Icons}/text.png") },
-                { IconType.Audio, Path.GetFullPath(Addition.Themes + theme +  $@"/{Addition.Icons}/audio.png") },
-                { IconType.Command, Path.GetFullPath(Addition.Themes + theme +  $@"/{Addition.Icons}/command.png") },
-                { IconType.Video, Path.GetFullPath(Addition.Themes + theme +  $@"/{Addition.Icons}/video.png") },
-                { IconType.Execute, Path.GetFullPath(Addition.Themes + theme +  $@"/{Addition.Icons}/execute.png") }
+                { IconTypeExplorer.Default, Path.GetFullPath(Addition.Themes + theme +  $@"/{Addition.Icons}/default.png") },
+                { IconTypeExplorer.Folder, Path.GetFullPath(Addition.Themes + theme +  $@"/{Addition.Icons}/folder.png") },
+                { IconTypeExplorer.Image, Path.GetFullPath(Addition.Themes + theme +  $@"/{Addition.Icons}/image.png") },
+                { IconTypeExplorer.Text, Path.GetFullPath(Addition.Themes + theme +  $@"/{Addition.Icons}/text.png") },
+                { IconTypeExplorer.Audio, Path.GetFullPath(Addition.Themes + theme +  $@"/{Addition.Icons}/audio.png") },
+                { IconTypeExplorer.Command, Path.GetFullPath(Addition.Themes + theme +  $@"/{Addition.Icons}/command.png") },
+                { IconTypeExplorer.Video, Path.GetFullPath(Addition.Themes + theme +  $@"/{Addition.Icons}/video.png") },
+                { IconTypeExplorer.Execute, Path.GetFullPath(Addition.Themes + theme +  $@"/{Addition.Icons}/execute.png") }
             };
+
+            IconsNotification = new Dictionary<IconTypeNotification, string>()
+            {
+                 { IconTypeNotification.Copy, Path.GetFullPath(Addition.Themes + theme +  $@"/{Addition.Icons}/copy.png") },
+                 { IconTypeNotification.Hack, Path.GetFullPath(Addition.Themes + theme +  $@"/{Addition.Icons}/hack.png") }
+            };
+
             LoadParams();
             LoadTheme();
             DevicesManager.StartListening();
@@ -91,6 +114,14 @@ namespace Terminal_7.Frames
             LblInfo.FontSize = ConfigManager.Config.FontSize;
             LblInfo.Opacity = ConfigManager.Config.Opacity;
             LblInfo.Foreground = (Brush)new BrushConverter().ConvertFromString(ConfigManager.Config.TerminalColor);
+
+            HackIco.Source = new BitmapImage(new Uri(IconsNotification[IconTypeNotification.Hack]));
+            HackIco.Visibility = Visibility.Hidden;
+
+            CopyIco.Source = new BitmapImage(new Uri(IconsNotification[IconTypeNotification.Copy]));
+            CopyIco.Visibility = Visibility.Hidden;
+
+            hackAllow = false;
         }
         private void AddDisk(string disk, bool addToList = true)
         {
@@ -106,9 +137,24 @@ namespace Terminal_7.Frames
 
                     var allFiles = Directory.GetFiles(disk).Select(Path.GetFileName).ToArray();
 
-                    if (!allFiles.Contains(AccessFileToReadDisk)) return;
+                    if (ConfigManager.Config.IsFlashcardHack)
+                    {
+                        if (allFiles.Contains(AccessFileToHack))
+                        {
+                            _disksToHack.Add(disk);
+                            HackIco.Visibility = Visibility.Visible;
+                            hackAllow = true;
+                        }
+                    }
+                    
+                        
+
+                    if (!allFiles.Contains(AccessFileToReadDisk)) 
+                        return;
+
 
                     var fullPath = File.ReadAllText(disk + AccessFileToReadDisk);
+                    disksPath = Path.GetDirectoryName(fullPath);
                     if (Directory.Exists(fullPath))
                     {
                         LblInfo.Content = "";
@@ -118,7 +164,7 @@ namespace Terminal_7.Frames
 
                         var lbi = new ListBoxItem()
                         {
-                            DataContext = new BitmapImage(new Uri(Icons[IconType.Folder])),
+                            DataContext = new BitmapImage(new Uri(IconsExplorer[IconTypeExplorer.Folder])),
                             Content = diskName,
                             Tag = fullPath,
                             Style = (Style)App.Current.FindResource("ImageText"),
@@ -160,6 +206,13 @@ namespace Terminal_7.Frames
                     LblInfo.Content = _NetDiskovText;
                     LblInfo.Visibility = Visibility.Visible;
                 }
+                if (_disksToHack.Contains(diskName))
+                {
+                    HackIco.Visibility = Visibility.Hidden;
+                    _disksToHack.Remove(diskName);
+                    hackAllow = false;
+                }
+                    
             }));
         }
 
@@ -238,19 +291,19 @@ namespace Terminal_7.Frames
                 };
 
                 if (Addition.Text.Contains(extension))
-                    lbi.DataContext = new BitmapImage(new Uri(Icons[IconType.Text]));
+                    lbi.DataContext = new BitmapImage(new Uri(IconsExplorer[IconTypeExplorer.Text]));
                 else if (Addition.Image.Contains(extension))
-                    lbi.DataContext = new BitmapImage(new Uri(Icons[IconType.Image]));
+                    lbi.DataContext = new BitmapImage(new Uri(IconsExplorer[IconTypeExplorer.Image]));
                 else if (Addition.Audio.Contains(extension))
-                    lbi.DataContext = new BitmapImage(new Uri(Icons[IconType.Audio]));
+                    lbi.DataContext = new BitmapImage(new Uri(IconsExplorer[IconTypeExplorer.Audio]));
                 else if (Addition.Video.Contains(extension))
-                    lbi.DataContext = new BitmapImage(new Uri(Icons[IconType.Video]));
+                    lbi.DataContext = new BitmapImage(new Uri(IconsExplorer[IconTypeExplorer.Video]));
                 else if (Addition.Command.Contains(extension))
-                    lbi.DataContext = new BitmapImage(new Uri(Icons[IconType.Command]));
+                    lbi.DataContext = new BitmapImage(new Uri(IconsExplorer[IconTypeExplorer.Command]));
                 else if (Addition.Execute.Contains(extension))
-                    lbi.DataContext = new BitmapImage(new Uri(Icons[IconType.Execute]));
+                    lbi.DataContext = new BitmapImage(new Uri(IconsExplorer[IconTypeExplorer.Execute]));
                 else
-                    lbi.DataContext = new BitmapImage(new Uri(Icons[IconType.Default]));
+                    lbi.DataContext = new BitmapImage(new Uri(IconsExplorer[IconTypeExplorer.Default]));
 
                 LB.Items.Add(lbi);
             }
@@ -266,7 +319,7 @@ namespace Terminal_7.Frames
             {
                 var lbi = new ListBoxItem()
                 {
-                    DataContext = new BitmapImage(new Uri(Icons[IconType.Folder])),
+                    DataContext = new BitmapImage(new Uri(IconsExplorer[IconTypeExplorer.Folder])),
                     Content = PrevDirText,
                     Tag = $@"{directory}\{PrevDirText}",
                     Style = (Style)App.Current.FindResource("ImageText"),
@@ -281,12 +334,12 @@ namespace Terminal_7.Frames
 
             foreach (var dir in allDirectories)
             {
-                var name =  Path.GetFileName(dir);
+                var name = Path.GetFileName(dir);
                 if (name == SystemFolder) continue;
 
                 var lbi = new ListBoxItem()
                 {
-                    DataContext = new BitmapImage(new Uri(Icons[IconType.Folder])),
+                    DataContext = new BitmapImage(new Uri(IconsExplorer[IconTypeExplorer.Folder])),
                     Content = name,
                     Tag = $@"{directory}\{name}",
                     Style = (Style)App.Current.FindResource("ImageText"),
@@ -386,6 +439,16 @@ namespace Terminal_7.Frames
                             {
                                 if (content.CanBeHacked)
                                 {
+
+                                    if (ConfigManager.Config.IsFlashcardHack && !hackAllow)
+                                    {
+                                        var alert = new AlertWindow("Уведомление", "Для взлома требуется внешний носитель с соответствующим ПО.", "Закрыть", _theme);
+                                        if (alert.ShowDialog() == false)
+                                        {
+                                            return;
+                                        }
+                                    }
+
                                     ///
                                     var hw = new HackWindow(_theme, lw.Password, content.HackAttempts);
                                     //lw.Close();
@@ -408,7 +471,7 @@ namespace Terminal_7.Frames
                                 }
                                 else
                                 {
-                                    var alert = new AlertWindow("Уведомление", "Оставшиеся попытки взлома: 0", "Закрыть", _theme);
+                                    var alert = new AlertWindow("Уведомление", "Недостаточно прав для взлома.", "Закрыть", _theme);
                                     if (alert.ShowDialog() == false)
                                     {
 
@@ -416,7 +479,7 @@ namespace Terminal_7.Frames
                                 }
                             }
                         }
-                        
+
                     }
                 }
                 catch
@@ -446,5 +509,146 @@ namespace Terminal_7.Frames
             return result;
         }
         private static bool IsFolder(string path) => Directory.Exists(path);
+        private void ExecuteDeleteCommand(object sender, ExecutedRoutedEventArgs e)
+        {
+            var lbi = (ListBoxItem)LB.SelectedItem;
+            if (lbi == null)
+                return;
+
+            copyPath = lbi.Tag.ToString();
+            if (File.Exists(copyPath + ".config"))
+            {
+                var content = JsonConvert.DeserializeObject<ConfigDeserializer>(File.ReadAllText(copyPath + ".config"));
+
+                if (!content.CanBeDeleted)
+                {
+                    var alert = new AlertWindow("Ошибка", "Недостаточно прав для удаления.", "Закрыть", _theme);
+                    if (alert.ShowDialog() == false)
+                    {
+                        return;
+                    }
+                }
+            }
+            string destinationDirectory = disksPath + TrashbinPath;
+            string destinationFile = destinationDirectory + "\\" + Path.GetFileName(copyPath);
+
+
+            try
+            {
+                if (!Directory.Exists(destinationDirectory))
+                {
+                    Directory.CreateDirectory(destinationDirectory);
+
+                }
+
+                if (!File.Exists(destinationFile))
+                {
+                    File.Move(copyPath, destinationFile);
+                    if (File.Exists(copyPath + ExtensionConfig))
+                        File.Move(copyPath + ExtensionConfig, destinationFile + ExtensionConfig);
+                }
+                else
+                {
+                    File.Copy(copyPath, destinationFile, true);
+                    if (File.Exists(copyPath + ExtensionConfig))
+                        File.Copy(copyPath + ExtensionConfig, destinationFile + ExtensionConfig, true);
+                    File.Delete(copyPath);
+                    if (File.Exists(copyPath + ExtensionConfig))
+                        File.Delete(copyPath + ExtensionConfig);
+                }
+
+                var alert = new AlertWindow("Уведомление", "Файл удален.", "Закрыть", _theme);
+                if (alert.ShowDialog() == false)
+                {
+                    Open(Path.GetDirectoryName(lbi.Tag.ToString()), true);
+                }
+            }
+            catch (IOException ioEx)
+            {
+
+                var alert = new AlertWindow("Ошибка", "Произошла непредвиденная ошибка.\r\n" + ioEx.Message, "Закрыть", _theme);
+                if (alert.ShowDialog() == false)
+                {
+
+                }
+            }
+            catch (UnauthorizedAccessException unAuthEx)
+            {
+
+                var alert = new AlertWindow("Ошибка", "Произошла непредвиденная ошибка.\r\n" + unAuthEx.Message, "Закрыть", _theme);
+                if (alert.ShowDialog() == false)
+                {
+
+                }
+            }
+        }
+        private void ExecuteCopyCommand(object sender, ExecutedRoutedEventArgs e)
+        {
+            
+            var lbi = (ListBoxItem)LB.SelectedItem;
+            if (lbi == null)
+                return;
+
+            copyPath = lbi.Tag.ToString();
+
+            if (File.Exists(copyPath + ".config"))
+            {
+                var content = JsonConvert.DeserializeObject<ConfigDeserializer>(File.ReadAllText(copyPath + ".config"));
+
+                if (!content.CanBeDeleted)
+                {
+                    var alert = new AlertWindow("Ошибка", "Недостаточно прав для копирования.", "Закрыть", _theme);
+                    if (alert.ShowDialog() == false)
+                    {
+                        return;
+                    }
+                }
+            }
+            CopyIco.Visibility = Visibility.Visible;
+        }
+        private void ExecutePasteCommand(object sender, ExecutedRoutedEventArgs e)
+        {
+            if (CopyIco.Visibility == Visibility.Hidden)
+                return;
+            CopyIco.Visibility = Visibility.Hidden;
+
+
+            var lbi = (ListBoxItem)LB.SelectedItem;
+            if (lbi == null)
+                return;
+
+            string destinationFile = Path.GetDirectoryName(lbi.Tag.ToString()) + "\\" + Path.GetFileName(copyPath);
+            //string destinationDirectory = lbi.Tag.ToString());
+
+            try
+            {
+                File.Copy(copyPath, destinationFile, true);
+                if (File.Exists(copyPath + ExtensionConfig))
+                    File.Copy(copyPath + ExtensionConfig, destinationFile + ExtensionConfig, true);
+                var alert = new AlertWindow("Уведомление", "Файл скопирован.", "Закрыть", _theme);
+                if (alert.ShowDialog() == false)
+                {
+                    Open(Path.GetDirectoryName(lbi.Tag.ToString()), true);
+                }    
+            }
+            catch (IOException ioEx)
+            {
+
+                var alert = new AlertWindow("Ошибка", "Произошла непредвиденная ошибка.\r\n" + ioEx.Message, "Закрыть", _theme);
+                if (alert.ShowDialog() == false)
+                {
+
+                }
+            }
+            catch (UnauthorizedAccessException unAuthEx)
+            {
+
+                var alert = new AlertWindow("Ошибка", "Произошла непредвиденная ошибка.\r\n" + unAuthEx.Message, "Закрыть", _theme);
+                if (alert.ShowDialog() == false)
+                {
+
+                }
+            }
+        }
     }
 }

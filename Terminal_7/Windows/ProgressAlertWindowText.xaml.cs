@@ -22,59 +22,64 @@ namespace Terminal_7.Windows
         Random r = new Random();
         DispatcherTimer dispatcherTimer = new DispatcherTimer();
         bool isWait = false;
-        bool flag = false;
+        bool isRandomLoading;
         int waitTime;
         int nowTime = 0;
         int maxLen;
         int indexCount = 0;
+        int totalTimeLen = 0;
+
+        int[] randomDelays;
+        int currentDelayIndex = 0;
+
         public ProgressAlertWindowText()
         {
             InitializeComponent();
         }
-        public ProgressAlertWindowText(string title, string message, string theme) : this()
+        public ProgressAlertWindowText(string title, string message, int minutes, int seconds, bool isRandomLoading, string theme) : this()
         {
             LoadTheme(theme);
             LoadParams(title, message);
 
+            this.isRandomLoading = isRandomLoading;
+
             dispatcherTimer.Tag = 0;
             dispatcherTimer.Tick += dispatcherTimer_Tick;
-            dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 100);
-
-
+            totalTimeLen = minutes * 60 + seconds;
 
             dispatcherTimer.Start();
         }
-        private void dispatcherTimer_Tick(object sender, EventArgs e)
+        private void InitializeRandomDelays()
         {
-            if (!isWait)
+            randomDelays = new int[maxLen+1];
+            int remainingDuration = totalTimeLen * 1000;
+
+            for (int i = 0; i < maxLen; i++)
             {
-                waitTime = r.Next(0, 6);
-                isWait = true;
-            }
-            else
-            {
-                if (nowTime < waitTime)
-                {
-                    nowTime++;
-                }
-                else
-                {
-                    indexCount++;
-                    ProgresBar.Text = "";
-                    for (int i = 0; i < indexCount; i++)
-                    {
-                        ProgresBar.Text += "|";
-                    }
-                    for (int i = indexCount; i <= maxLen; i++)
-                    {
-                        ProgresBar.Text += ".";
-                    }
-                    
-                    isWait = false;
-                    nowTime = 0;
-                }
+                randomDelays[i] = r.Next(5, remainingDuration / (maxLen - i));
+                remainingDuration -= randomDelays[i];
             }
 
+            randomDelays[maxLen ] = remainingDuration;
+            ShuffleArray(randomDelays);
+        }
+
+        private void ShuffleArray(int[] array)
+        {
+            for (int i = array.Length - 1; i > 0; i--)
+            {
+                int j = r.Next(0, i + 1);
+                int temp = array[i];
+                array[i] = array[j];
+                array[j] = temp;
+            }
+        }
+        private void dispatcherTimer_Tick(object sender, EventArgs e)
+        {
+            if (isRandomLoading)
+                RandomLoading();
+            else
+                SmoothLoading();
 
             if (indexCount > maxLen)
             {
@@ -84,14 +89,45 @@ namespace Terminal_7.Windows
                     Thread.Sleep(1000);
                     Dispatcher.BeginInvoke(new Action(() =>
                     {
-                        
+
                         Close();
                     }));
                 });
                 newThread.Start();
             }
         }
+        private void SmoothLoading()
+        {
+            indexCount++;
+            ProgresBar.Text = "";
+            for (int i = 0; i < indexCount; i++)
+            {
+                ProgresBar.Text += "|";
+            }
+            for (int i = indexCount; i <= maxLen; i++)
+            {
+                ProgresBar.Text += ".";
+            }
+        }
+        private void RandomLoading()
+        {
+            if (currentDelayIndex < randomDelays.Length)
+            {
+                dispatcherTimer.Interval = TimeSpan.FromMilliseconds(randomDelays[currentDelayIndex]);
+                currentDelayIndex++;
 
+                indexCount++;
+                ProgresBar.Text = "";
+                for (int i = 0; i < indexCount; i++)
+                {
+                    ProgresBar.Text += "|";
+                }
+                for (int i = indexCount; i <= maxLen; i++)
+                {
+                    ProgresBar.Text += ".";
+                }
+            }
+        }
         private void LoadTheme(string theme)
         {
             var nameFont = "Font.ttf";
@@ -134,6 +170,10 @@ namespace Terminal_7.Windows
         {
             maxLen = (int)(ProgresBar.ActualWidth / Math.Ceiling(GetSizeContent(ProgresBar, ".").Width));
             ProgresBar.Text = new string('.', maxLen);
+            float timeTick = (float)totalTimeLen / (float)maxLen;
+
+            dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, (int)(timeTick * 1000));
+            InitializeRandomDelays();
         }
         private static Size GetSizeContent(TextBlock tb, string content) => MeasureString(content, tb.FontFamily, tb.FontStyle,
            tb.FontWeight, tb.FontStretch, tb.FontSize);

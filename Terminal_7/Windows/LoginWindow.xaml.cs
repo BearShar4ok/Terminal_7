@@ -86,7 +86,11 @@ namespace Terminal_7.Windows
         }
         private void LoadTheme(string theme)
         {
-            Background = new ImageBrush() { ImageSource = new BitmapImage(new Uri(Addition.Themes + theme + "/Background.png", UriKind.Relative)) };
+            //Background = new ImageBrush() { ImageSource = new BitmapImage(new Uri(Addition.Themes + theme + "/Background.png", UriKind.Relative)) };
+            Background = (Brush)new BrushConverter().ConvertFromString(ConfigManager.Config.TerminalColorSecond);
+            Background.Opacity = 0.5;
+            BorderBrush = (Brush)new BrushConverter().ConvertFromString(ConfigManager.Config.TerminalColor);
+            BorderThickness = new Thickness(1);
             var nameFont = "Font.ttf";
             var fullpath = Path.GetFullPath(Addition.Themes + theme + "/" + nameFont);
 
@@ -102,9 +106,9 @@ namespace Terminal_7.Windows
 
         private void LoadParams()
         {
-            WindowStyle = WindowStyle.None;
-            WindowState = WindowState.Maximized;
-            ResizeMode = ResizeMode.NoResize;
+           WindowStyle = WindowStyle.None;
+           //WindowState = WindowState.Maximized;
+           ResizeMode = ResizeMode.NoResize;
 
             TBLogin.CharacterCasing = CharacterCasing.Lower;
             TBPassword.CharacterCasing = CharacterCasing.Lower;
@@ -112,8 +116,12 @@ namespace Terminal_7.Windows
             TBLogin.Text = "";
             TBPassword.Text = "";
 
+            Left = SystemParameters.PrimaryScreenWidth / 2 - Width / 2;
+            Top = SystemParameters.PrimaryScreenHeight / 2 - Height / 2;
+
             TBLogin.FontSize = ConfigManager.Config.FontSize;
             TBLogin.Opacity = ConfigManager.Config.Opacity;
+            TBLogin.CaretBrush = Brushes.Transparent;
             TBLogin.Foreground = (Brush)new BrushConverter().ConvertFromString(ConfigManager.Config.TerminalColor);
 
             LblLogin.FontSize = ConfigManager.Config.FontSize;
@@ -123,6 +131,7 @@ namespace Terminal_7.Windows
 
             TBPassword.FontSize = ConfigManager.Config.FontSize;
             TBPassword.Opacity = ConfigManager.Config.Opacity;
+            TBPassword.CaretBrush = Brushes.Transparent;
             TBPassword.Foreground = (Brush)new BrushConverter().ConvertFromString(ConfigManager.Config.TerminalColor);
 
             LblPassword.FontSize = ConfigManager.Config.FontSize;
@@ -143,6 +152,7 @@ namespace Terminal_7.Windows
 
             if (ConfigManager.Config.IsDebugMode)
             {
+                return;
                 TBLogin.BorderThickness = new Thickness(1);
                 LblLogin.BorderThickness = new Thickness(1);
                 TBPassword.BorderThickness = new Thickness(1);
