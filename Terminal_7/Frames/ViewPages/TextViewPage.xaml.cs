@@ -223,7 +223,7 @@ namespace Terminal_7.Frames.ViewPages
         }
         private void SendFile(object sender, ExecutedRoutedEventArgs e)
         {
-            ProgressAlertWindowText pw = new ProgressAlertWindowText("Отправка файлов", "Ожидайте. Идет отправка...",0,20,true, _theme);
+            ProgressAlertWindowText pw = new ProgressAlertWindowText("Отправка файлов", "Ожидайте. Идет отправка...", 0, 20, true, _theme);
             if (pw.ShowDialog() == false)
             {
 

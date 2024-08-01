@@ -364,22 +364,25 @@ namespace Terminal_7.Windows
 
 
         // Get the number of identical characters in strings
-        private int HowManyCorrectSymbols(string word)
+        private object[] HowManyCorrectSymbols(string word)
         {
             var lstw = word.ToList();
             var lstrw = _rightWord.ToList();
             var result = 0;
+            string letters = "";
 
             foreach (var charw in lstw)
             {
                 if (lstrw.Contains(charw))
                 {
                     result++;
+                    letters += charw;
+                    letters += " ";
                     lstrw.Remove(charw);
                 }
             }
 
-            return result;
+            return new object[] {result,letters};
         }
 
         // Check word to correct
@@ -406,7 +409,7 @@ namespace Terminal_7.Windows
             if (_lives > 0)
             {
                 if (ConfigManager.Config.DifficultyInfo)
-                    AddTextToConsole(">" + HowManyCorrectSymbols(text) + " из " + _rightWord.Length + " верно!");
+                    AddTextToConsole(">" + HowManyCorrectSymbols(text)[0] + " из " + _rightWord.Length + " верно! Совпадение: " + HowManyCorrectSymbols(text)[1]);
 
                 AddTextToConsole("Осталось " + _lives + " из " + _startLives + " попыток!");
                 AddTextToConsole(">DENIED");
