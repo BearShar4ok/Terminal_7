@@ -519,7 +519,7 @@ namespace Terminal_7.Frames
             if (File.Exists(copyPath + ".config"))
             {
                 var content = JsonConvert.DeserializeObject<ConfigDeserializer>(File.ReadAllText(copyPath + ".config"));
-
+                 
                 if (!content.CanBeDeleted)
                 {
                     var alert = new AlertWindow("Ошибка", "Недостаточно прав для удаления.", "Закрыть", _theme);
