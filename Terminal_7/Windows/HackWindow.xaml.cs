@@ -396,6 +396,7 @@ namespace Terminal_7.Windows
                 ReternedState = State.Access;
                 Close();
                 return;
+                //ConfigManager.Config;
             }
 
             _lives--;

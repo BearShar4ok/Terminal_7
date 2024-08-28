@@ -557,7 +557,13 @@ namespace Terminal_7.Frames
                         File.Delete(copyPath + ExtensionConfig);
                 }
 
-                var alert = new AlertWindow("Уведомление", "Файл удален.", "Закрыть", _theme);
+                var loading = new ProgressAlertWindowText("Удаление", "Процесс удаления...",7,0,true,_theme);
+                if (loading.ShowDialog() == false)
+                {
+
+                }
+
+                    var alert = new AlertWindow("Уведомление", "Файл удален.", "Закрыть", _theme);
                 if (alert.ShowDialog() == false)
                 {
                     Open(Path.GetDirectoryName(lbi.Tag.ToString()), true);
